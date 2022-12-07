@@ -48,11 +48,12 @@ dias = ['Days%3A1-10', 'Days%3A10-35']
 dias_f = ['d1-10', 'd10-35']
 
 
-for fecha in fechas[0:2]:
+for fecha in fechas:
     year = fecha.strftime('%Y')
     ymd = fecha.strftime('%Y%m%d')
     for ensemble in ensembles:
         for dia, dia_f in zip(dias, dias_f):
+            time.sleep(6)  # 6 segundos de sleep para no colapsar el servidor.
             # Colocamos nombre de archivo
             archivo = variable + '_' + ymd + '00_' + ensemble + '.grib2'
             carpeta_s = carpeta + variable + '/' + year + '/' + ymd + '00/' + dia_f + '/'
@@ -70,5 +71,8 @@ for fecha in fechas[0:2]:
                     for data in response.iter_content(chunk_size=1024):
                         size = file.write(data)
                         #bar.update(size)
+            response.close()
+            ##########
+            
 end = time.time()
 print('Tiempo de descarga: ', (end - start)/60., ' minutos')
