@@ -5,8 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
-/CFSv2/descargas/*
-/CFSv2/descargas/shera/*
+/CFSv2/descargas/*.grb2
 /GEFSv12/descargas/shera/*
 /ERA5/descargas/shera/*
 /ERA5/shera/*
