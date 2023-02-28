@@ -9,6 +9,8 @@ __pycache__/
 /GEFSv12/descargas/shera/*
 /ERA5/descargas/shera/*
 /ERA5/shera/*
+*.nc
+*.jpg
 
 # Distribution / packaging
 .Python

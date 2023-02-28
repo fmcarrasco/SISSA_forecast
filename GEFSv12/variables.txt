@@ -1,0 +1,112 @@
+----------------------------
+apcp_sfc
+/shera/datos/GEFSv12/apcp_sfc/2010/2010010600/d1-10/apcp_sfc_2010010600_c00.grib2
+['forecast_time1', 'lat_0', 'lon_0', 'forecast_time0']
+['forecast_time0', 'lat_0', 'lon_0', 'forecast_time1']
+['APCP_P11_L1_GLL0_acc6h', 'APCP_P11_L1_GLL0_acc3h']
+-----------
+/shera/datos/GEFSv12/apcp_sfc/2010/2010010600/d10-35/apcp_sfc_2010010600_c00.grib2
+['lat_0', 'lon_0', 'forecast_time0']
+['forecast_time0', 'lat_0', 'lon_0']
+['APCP_P11_L1_GLL0_acc6h']
+-----------
+dlwrf_sfc
+/shera/datos/GEFSv12/dlwrf_sfc/2010/2010010600/d1-10/dlwrf_sfc_2010010600_c00.grib2
+['forecast_time1', 'lat_0', 'lon_0', 'forecast_time0']
+['forecast_time0', 'lat_0', 'lon_0', 'forecast_time1']
+['DLWRF_P11_L1_GLL0_avg6h', 'DLWRF_P11_L1_GLL0_avg3h']
+-----------
+/shera/datos/GEFSv12/dlwrf_sfc/2010/2010010600/d10-35/dlwrf_sfc_2010010600_c00.grib2
+['lat_0', 'lon_0', 'forecast_time0']
+['forecast_time0', 'lat_0', 'lon_0']
+['DLWRF_P11_L1_GLL0_avg6h']
+-----------
+dswrf_sfc
+/shera/datos/GEFSv12/dswrf_sfc/2010/2010010600/d1-10/dswrf_sfc_2010010600_c00.grib2
+['forecast_time1', 'lat_0', 'lon_0', 'forecast_time0']
+['forecast_time0', 'lat_0', 'lon_0', 'forecast_time1']
+['DSWRF_P11_L1_GLL0_avg6h', 'DSWRF_P11_L1_GLL0_avg3h']
+-----------
+/shera/datos/GEFSv12/dswrf_sfc/2010/2010010600/d10-35/dswrf_sfc_2010010600_c00.grib2
+['lat_0', 'lon_0', 'forecast_time0']
+['forecast_time0', 'lat_0', 'lon_0']
+['DSWRF_P11_L1_GLL0_avg6h']
+-----------
+pres_sfc
+/shera/datos/GEFSv12/pres_sfc/2010/2010010600/d1-10/pres_sfc_2010010600_c00.grib2
+['lat_0', 'lon_0', 'forecast_time0']
+['forecast_time0', 'lat_0', 'lon_0']
+['PRES_P1_L1_GLL0']
+-----------
+/shera/datos/GEFSv12/pres_sfc/2010/2010010600/d10-35/pres_sfc_2010010600_c00.grib2
+['lat_0', 'lon_0', 'forecast_time0']
+['forecast_time0', 'lat_0', 'lon_0']
+['PRES_P1_L1_GLL0']
+-----------
+tmax_2m
+/shera/datos/GEFSv12/tmax_2m/2010/2010010600/d1-10/tmax_2m_2010010600_c00.grib2
+['forecast_time1', 'lat_0', 'lon_0', 'forecast_time0']
+['forecast_time0', 'lat_0', 'lon_0', 'forecast_time1']
+['TMAX_P11_L103_GLL0_max6h', 'TMAX_P11_L103_GLL0_max3h']
+-----------
+/shera/datos/GEFSv12/tmax_2m/2010/2010010600/d10-35/tmax_2m_2010010600_c00.grib2
+['lat_0', 'lon_0', 'forecast_time0']
+['forecast_time0', 'lat_0', 'lon_0']
+['TMAX_P11_L103_GLL0_max6h']
+-----------
+tmin_2m
+/shera/datos/GEFSv12/tmin_2m/2010/2010010600/d1-10/tmin_2m_2010010600_c00.grib2
+['forecast_time1', 'lat_0', 'lon_0', 'forecast_time0']
+['forecast_time0', 'lat_0', 'lon_0', 'forecast_time1']
+['TMIN_P11_L103_GLL0_min6h', 'TMIN_P11_L103_GLL0_min3h']
+-----------
+/shera/datos/GEFSv12/tmin_2m/2010/2010010600/d10-35/tmin_2m_2010010600_c00.grib2
+['lat_0', 'lon_0', 'forecast_time0']
+['forecast_time0', 'lat_0', 'lon_0']
+['TMIN_P11_L103_GLL0_min6h']
+-----------
+tmp_2m
+/shera/datos/GEFSv12/tmp_2m/2010/2010010600/d1-10/tmp_2m_2010010600_c00.grib2
+['lat_0', 'lon_0', 'forecast_time0']
+['forecast_time0', 'lat_0', 'lon_0']
+['TMP_P1_L103_GLL0']
+-----------
+/shera/datos/GEFSv12/tmp_2m/2010/2010010600/d10-35/tmp_2m_2010010600_c00.grib2
+['lat_0', 'lon_0', 'forecast_time0']
+['forecast_time0', 'lat_0', 'lon_0']
+['TMP_P1_L103_GLL0']
+-----------
+ulwrf_sfc
+/shera/datos/GEFSv12/ulwrf_sfc/2010/2010010600/d1-10/ulwrf_sfc_2010010600_c00.grib2
+['forecast_time1', 'lat_0', 'lon_0', 'forecast_time0']
+['forecast_time0', 'lat_0', 'lon_0', 'forecast_time1']
+['ULWRF_P11_L1_GLL0_avg6h', 'ULWRF_P11_L1_GLL0_avg3h']
+-----------
+/shera/datos/GEFSv12/ulwrf_sfc/2010/2010010600/d10-35/ulwrf_sfc_2010010600_c00.grib2
+['lat_0', 'lon_0', 'forecast_time0']
+['forecast_time0', 'lat_0', 'lon_0']
+['ULWRF_P11_L1_GLL0_avg6h']
+-----------
+ugrd_hgt
+/shera/datos/GEFSv12/ugrd_hgt/2010/2010010600/d1-10/ugrd_hgt_2010010600_c00.grib2
+['lat_0', 'lon_0', 'lv_HTGL0', 'forecast_time0']
+['forecast_time0', 'lv_HTGL0', 'lat_0', 'lon_0']
+['UGRD_P1_L103_GLL0']
+-----------
+/shera/datos/GEFSv12/ugrd_hgt/2010/2010010600/d10-35/ugrd_hgt_2010010600_c00.grib2
+['lat_0', 'lon_0', 'lv_HTGL0', 'forecast_time0']
+['forecast_time0', 'lv_HTGL0', 'lat_0', 'lon_0']
+['UGRD_P1_L103_GLL0']
+-----------
+vgrd_hgt
+/shera/datos/GEFSv12/vgrd_hgt/2010/2010010600/d1-10/vgrd_hgt_2010010600_c00.grib2
+['lat_0', 'lon_0', 'lv_HTGL0', 'forecast_time0']
+['forecast_time0', 'lv_HTGL0', 'lat_0', 'lon_0']
+['VGRD_P1_L103_GLL0']
+-----------
+/shera/datos/GEFSv12/vgrd_hgt/2010/2010010600/d10-35/vgrd_hgt_2010010600_c00.grib2
+['lat_0', 'lon_0', 'lv_HTGL0', 'forecast_time0']
+['forecast_time0', 'lv_HTGL0', 'lat_0', 'lon_0']
+['VGRD_P1_L103_GLL0']
+-----------
+0.503  seconds

@@ -41,17 +41,17 @@ carpeta = '/shera/datos/GEFSv12/'
 os.makedirs(carpeta, exist_ok=True)
 
 url_base = 'https://noaa-gefs-retrospective.s3.amazonaws.com/GEFSv12/reforecast/'
-fechas = pd.bdate_range(start='2000-01-05', end='2019-12-25', freq='W-WED')
+fechas = pd.bdate_range(start='2004-12-08', end='2019-12-25', freq='W-WED')
 variable = 'apcp_sfc'
 ensembles = ['c00', 'p01', 'p02', 'p03', 'p04', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10']
 dias = ['Days%3A1-10', 'Days%3A10-35']
 dias_f = ['d1-10', 'd10-35']
 
 
-for fecha in fechas:
+for fecha in fechas[0:1]:
     year = fecha.strftime('%Y')
     ymd = fecha.strftime('%Y%m%d')
-    for ensemble in ensembles:
+    for ensemble in ensembles[1:2]:
         for dia, dia_f in zip(dias, dias_f):
             time.sleep(6)  # 6 segundos de sleep para no colapsar el servidor.
             # Colocamos nombre de archivo

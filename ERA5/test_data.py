@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import os
+import time
 
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
@@ -15,10 +16,23 @@ import sys
 sys.path.append('./lib/')
 from erah_class import erah_class
 
-year = 2010
+start = time.time()
+
+year = 2003
 
 o1 = erah_class(year)
-
+print(o1.var)
+print(len(o1.dtime))
+print(o1.fun_daily.keys())
+d1, m1, u1 = o1.get_variables('mx2t')
+print(d1.shape)
+datos = {}; mask = {}
+datos['mx2t'] = d1
+mask['mx2t'] = m1
+dato_diario = o1.calc_daily('tmax', datos, mask)
+print(dato_diario['tmax'])
+print(time.time()-start)
+exit()
 
 stamen_terrain = cimgt.Stamen('terrain')
 # get country borders
