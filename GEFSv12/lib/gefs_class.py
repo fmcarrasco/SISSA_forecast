@@ -141,7 +141,7 @@ class gefs_class:
         t0 = ds.createVariable('time', 'u8', ('time',))
         t0.long_name = 'time'
         t0.standard_name = 'time'
-        t0.units = 'days since 2000-01-01 00:00'
+        t0.units = 'days since 1900-01-01 00:00:00'
         t0.calendar = 'proleptic_gregorian'
         t0.axis = 'T'
         t0[:] = self.fechas_d
