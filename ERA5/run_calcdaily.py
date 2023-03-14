@@ -62,9 +62,9 @@ daily_vars = ['tmax', 'tmin', 'tmean', 'rh', 'u10', 'ROCsfc', 'rain',
 hourly_vars = ['mx2t', 'mn2t', 't2m', 't2m;d2m', 'u10;v10', 'ssrd',
                'tp', 'msl', 'sp', 'str', 'd2m', 'u10', 'v10', 'd2m']
 
-for var, hvar in zip(daily_vars[9:],hourly_vars[9:]):
+for var, hvar in zip(daily_vars,hourly_vars):
     print(var, hvar)
-    v_folder = '/shera/datos/ERA5/' + var + '/'
+    v_folder = '/shera/datos/SISSA/Diarios/ERA5/' + var + '/'
     os.makedirs(v_folder, exist_ok=True)
     for year in np.arange(2000,2020):
         print(year)

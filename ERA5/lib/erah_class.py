@@ -93,7 +93,6 @@ class erah_class:
 
     def get_time(self):
         time = self.nc.variables['time']
-        print(len(time))
         aux_t = num2date(time[:], time.units,
                          only_use_cftime_datetimes=False,
                          only_use_python_datetimes=True)
@@ -104,8 +103,8 @@ class erah_class:
         aux_t2 = num2date(time2[:], time2.units,
                           only_use_cftime_datetimes=False,
                           only_use_python_datetimes=True)
-        aux_local = [a - dt.timedelta(hours=3) for a in aux_t]
-        aux_local1 = [a - dt.timedelta(hours=3) for a in aux_t2]
+        aux_local = [dt.datetime(a.year, a.month, a.day, a.hour, 0, 0) for a in aux_t]
+        aux_local1 = [dt.datetime(a.year, a.month, a.day, a.hour, 0, 0)  for a in aux_t2]
         aux_local.extend(aux_local1)
         years = np.array([a.year for a in aux_local])
         # Tiempo para todas las variables, excepto precipitacion
@@ -113,8 +112,8 @@ class erah_class:
         self.indices = years == self.year
         self.dtime = np.array(aux_local)[self.indices]
         # Tiempo para variable precipitacion
-        d1 = dt.datetime(self.year, 1, 1, 9, 0, 0)
-        d2 = dt.datetime(self.year+1, 1, 1, 8, 0, 0) 
+        d1 = dt.datetime(self.year, 1, 1, 12, 0, 0)
+        d2 = dt.datetime(self.year+1, 1, 1, 11, 0, 0) 
         self.indices_pp = [True if ((a >= d1) & (a <= d2)) else False for a in aux_local]
         self.dtime_pp = np.array(aux_local)[self.indices_pp]
         #

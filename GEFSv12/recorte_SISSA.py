@@ -18,7 +18,7 @@ var = variables[6]
 datavar = {'nvar': 't2m', 'standard_name': 'air_temperature',
         'long_name': '6hour_2m_air_temperature'}
 
-fechas = pd.date_range('2017-06-28', '2019-12-25', freq='W-WED')
+fechas = pd.date_range('2000-01-05', '2019-12-25', freq='W-WED')
 ensembles = ['c00', 'p01', 'p02', 'p03', 'p04', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10']
 
 carpeta = '/shera/datos/SISSA/GEFSv12/'

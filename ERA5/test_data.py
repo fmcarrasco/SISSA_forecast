@@ -22,15 +22,15 @@ year = 2003
 
 o1 = erah_class(year)
 print(o1.var)
-print(len(o1.dtime))
-print(o1.fun_daily.keys())
-d1, m1, u1 = o1.get_variables('mx2t')
+print((o1.dtime))
+#print(o1.fun_daily.keys())
+d1, m1, u1, fv = o1.get_variables('t2m')
 print(d1.shape)
 datos = {}; mask = {}
-datos['mx2t'] = d1
-mask['mx2t'] = m1
-dato_diario = o1.calc_daily('tmax', datos, mask)
-print(dato_diario['tmax'])
+datos['t2m'] = d1
+mask['t2m'] = m1
+dato_diario = o1.calc_daily('tmean', datos, mask)
+print(dato_diario['tmean'].shape)
 print(time.time()-start)
 exit()
 
