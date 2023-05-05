@@ -12,8 +12,10 @@ start = time.time()
 carpeta = '/Volumes/Almacenamiento/python_proyects/DATOS/CFSR/'
 os.makedirs(carpeta, exist_ok=True)
 
-url_base = "https://www.ncei.noaa.gov/data/climate-forecast-system/access/reforecast/6-hourly-flux-9-month-runs/"
+#url_base = "https://www.ncei.noaa.gov/data/climate-forecast-system/access/reforecast/6-hourly-flux-9-month-runs/"
 #url_base = "https://www.ncei.noaa.gov/data/climate-forecast-system/access/reforecast/high-priority-subset/time-series-9-month/"
+#url_base = "https://www.ncei.noaa.gov/oa/prod-cfs-reforecast/index.html#high-priority-subset/time-series-9-month/"
+url_base = "https://www.ncei.noaa.gov/oa/prod-cfs-reforecast/index.html#cfs_reforecast_6-hourly_9mon_flxf/"
 
 years = [str(yr) for yr in range(2000,2012)]
 months = [str(mo).zfill(2) for mo in range(1,13)]
@@ -38,9 +40,12 @@ for year in years[7:8]:
             os.makedirs(carpeta_s, exist_ok=True)
             # URL de localilizacion de archivo
             url_test = url_base + year + '/' + ym_d + '/' + ymd + '/'
+            print(url_test)
             # Archivo de texto con todos los nombres de archivo
             farch = carpeta_s + 'links_' + ymd + '.txt'
             soup = BeautifulSoup(requests.get(url_test).text, features="lxml")
+            print(soup)
+            exit()
             with open(farch,'w') as f:
                 for a in soup.find_all('a'):
                     elec = ('.grb2.md5' in a['href']) or ('?C' in a['href']) or ('/data/' in a['href'])
