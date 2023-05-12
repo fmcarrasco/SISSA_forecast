@@ -38,20 +38,16 @@ for fecha in [dt.datetime(2011,2,16)]:
         fechas = [(fecha+dt.timedelta(days=i)) for i in range(0,34)]
         tiempos = pd.date_range(fecha, periods=34)
         tiempo_referencia = pd.Timestamp(fecha)
+        # Lectura de datos historicos ERA5
         data_era5, i_era5= get_era5hist_data_xarray(nomvar, era5_f, fechas)
-        #print(data_era5)
-        #print(type(data_era5))
-        #
+        # Lectura de datos historicos GEFSv12
         data_gefs, i_gefs= get_gefshist_data_xarray(nomvar, gefs_f, fechas)
-        #print(data_gefs)
-        #print(type(data_gefs))
-        #
         print('Extrayendo datos del pronostico')
         #archivos = [gefs_f + 'Diarios/'+ nomvar + '/' + fp +'/' + nomvar + '_' + fp + '_' + ens + '.nc' for ens in ensambles]
         archivos = [gefs_f + 'Diarios/GEFSv12/'+ nomvar + '/' + yr + '/' + fp +'/' + nomvar + '_' + fp + '_' + ens + '.nc' for ens in ensambles]
 
         for archivo in archivos[0:1]:
-            ds = xr.open_dataset(archivo, chunks={'time':-1,'lat':20, 'lon':20})
+            ds = xr.open_dataset(archivo, chunks={'time':-1,'lat':30, 'lon':30})
             #print(ds.tmean)
             #print(type(ds))
             print(ds.tmean[:,10,10].values)
@@ -65,30 +61,10 @@ for fecha in [dt.datetime(2011,2,16)]:
             print('Se demoro en corregir', minutos, ' minutos')
             #print(out.tmean[10,10,:].values)
             exit()
-            
-            
-            for i in np.arange(0,2):
-                print(i)
-                for j in np.arange(0,2):
-                    print(j)
-                    prono = datos[:,j,i]
-                    print(type(prono))
-                    exit()
-                    era5_hist = data_era5[:,:,j,i]
-                    gefs_hist = data_gefs[:,:,j,i]
-
-                    datos_corr[:,j,i] = series_qq_corr(prono, era5_hist, gefs_hist)
-                    print(datos[:,j,i])
-                    print(datos_corr[:,j,i])
         #####################################
         end = time.time()
         minutos = np.round((end-start)/60., 3)
         print('Tiempo de demora: ', minutos, ' minutos.')
-        # Recorremos cada uno de los valores de la matriz datos en lat/lon
-        
-
-                
-
 ############################
 end = time.time()
 minutos = np.round((end-start)/60., 3)
