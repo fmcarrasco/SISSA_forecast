@@ -31,7 +31,8 @@ for var in variables:
     print(list(ds2.data_vars))
     print('-----------')
 '''
-f1 = '/shera/datos/GEFSv12/apcp_sfc/2000/2000010500/d1-10/apcp_sfc_2000010500_c00.grib2'
+#f1 = '/shera/datos/GEFSv12/apcp_sfc/2000/2000010500/d1-10/apcp_sfc_2000010500_c00.grib2'
+f1 = '/shera/datos/GEFSv12/dswrf_sfc/2000/2000010500/d1-10/dswrf_sfc_2000010500_c00.grib2'
 ds1 = xr.open_dataset(f1, engine='pynio')
 ds1 = ds1.rename_dims({'forecast_time0':'time', 'lat_0':'lat', 'lon_0':'lon', 'forecast_time1':'time1'})
 ds1 = ds1.rename({'forecast_time0':'time', 'lat_0':'lat', 'lon_0':'lon', 'forecast_time1':'time1'}) 
@@ -40,7 +41,7 @@ ds1.attrs['Conventions'] = 'CF-1.10'
 ds1.attrs['title'] = '00 ensemble forecast'
 ds1.attrs['source'] = 'GEFSv12'
 
-ini_time = dt.datetime.strptime(ds1.APCP_P11_L1_GLL0_acc6h.initial_time, '%m/%d/%Y (%H:%M)')
+ini_time = dt.datetime.strptime(ds1.DSWRF_P11_L1_GLL0_avg6h.initial_time, '%m/%d/%Y (%H:%M)')
 horas = np.arange(6,246,6)
 tiempos = [ini_time + dt.timedelta(hours=int(hora)) for hora in horas]
 
@@ -55,7 +56,11 @@ ds1.time['long_name'] = 'time'
 ds1.time.encoding['units'] = time_units
 ds1.time['calendar'] = time_calendar
 
-print(ds1['time'].attrs)
+loni = -58.38 % 360
+
+print(ds1.sel(lat=-34.61, lon=loni, method='nearest')['DSWRF_P11_L1_GLL0_avg6h'][:])
+print(ds1.sel(lat=-34.61, lon=loni, method='nearest')['time'])
+
 
 ds1.to_netcdf('./test_1.nc', format='NETCDF4')
 

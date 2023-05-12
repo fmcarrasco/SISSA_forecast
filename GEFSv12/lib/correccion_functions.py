@@ -22,15 +22,19 @@ def series_qqcorr(prono, era5_hist, gefs_hist):
     '''
     prono_corr = prono.copy()
     for i, val in enumerate(prono):
-        df_m = gefs_hist[i,:]
-        df_o = era5_hist[i,:]
-        ecdf_m = ECDF(df_m)
-        # Q-Q correction
-        cdf_limit = 0.9999999
-        p1 = ecdf_m(val)
-        if p1 > cdf_limit:
-            p1 = cdf_limit
-        prono_corr[i] = np.nanquantile(df_o, p1, method='linear')
+        if np.isnan(val):
+            prono_corr[i] = np.nan
+            continue
+        else:
+            df_m = ma.masked_invalid(gefs_hist[i,:])
+            df_o = era5_hist[i,:]
+            ecdf_m = ECDF(df_m)
+            # Q-Q correction
+            cdf_limit = 0.9999999
+            p1 = ecdf_m(val)
+            if p1 > cdf_limit:
+                p1 = cdf_limit
+            prono_corr[i] = np.nanquantile(df_o, p1, method='linear')
 
     return prono_corr
 
@@ -53,7 +57,7 @@ def qqcorr(prono, hist_era5, hist_gefs):
     return prono_corr
 
 def qq_correcion(x,y,z):
-    return xr.apply_ufunc(qqcorr, x, y, z, input_core_dims=[['time'], ['time', 'hist_time0'], ['time', 'hist_time1']],
-                          dask='parallelized',#vectorize=True,  # !Important!
+    return xr.apply_ufunc(series_qqcorr, x, y, z, input_core_dims=[['time'], ['time', 'hist_time0'], ['time', 'hist_time1']],
+                          output_core_dims = [['time']], dask='parallelized',vectorize=True,  # !Important!
                           output_dtypes=[float])
     

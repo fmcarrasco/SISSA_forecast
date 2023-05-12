@@ -13,12 +13,12 @@ start = time.time()
 variables = ['apcp_sfc', 'dlwrf_sfc', 'dswrf_sfc', 'pres_sfc', 'tmax_2m', 'tmin_2m',
              'tmp_2m', 'ulwrf_sfc', 'ugrd_hgt', 'vgrd_hgt']
 
-var = variables[6]
+var = variables[5]
 
-datavar = {'nvar': 't2m', 'standard_name': 'air_temperature',
-        'long_name': '6hour_2m_air_temperature'}
-
-fechas = pd.date_range('2000-01-05', '2019-12-25', freq='W-WED')
+datavar = {'nvar': 'tmin_2m', 'standard_name': 'minimum_air_temperature_2m',
+        'long_name': '6hour minimum temperature at 2m'}
+#2000-01-05
+fechas = pd.date_range('2002-05-08', '2019-12-25', freq='W-WED')
 ensembles = ['c00', 'p01', 'p02', 'p03', 'p04', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10']
 
 carpeta = '/shera/datos/SISSA/GEFSv12/'
@@ -35,6 +35,8 @@ for fecha in fechas:
         f1 = '/shera/datos/GEFSv12/' + var + '/' + year + '/' + fecha_c + '/d1-10/' + var +\
                 '_' + fecha_c + '_' + ensemble + '.grib2'
         #------ Recorte para archivo 1-10 dias
+        if (not os.path.exists(f1)) or (not os.path.exists(f2)):
+            continue
         pesoMB = np.round(os.stat(f1).st_size/1024.0/1024.0,2)
         if pesoMB < 1.:
             print('Error en el archivo: ')
@@ -68,4 +70,4 @@ for fecha in fechas:
         print('------------------------------------------')
 
 end = time.time()
-print( np.round(end - start,3), ' seconds')
+print( np.round((end - start)/60.,3), ' minutes')

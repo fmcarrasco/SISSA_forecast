@@ -1,7 +1,7 @@
 import sys
 import pandas as pd
 import numpy as np
-sys.path.append('./lib/')
+sys.path.append('../lib/')
 from gefs_class import gefs_class
 import time
 
@@ -9,19 +9,20 @@ start = time.time()
 #archivo0 = '../../DATOS/GEFSv12/apcp_sfc/2000/2000010500/d1-10/apcp_sfc_2000010500_c00.nc'
 #archivo1 = '../../DATOS/GEFSv12/apcp_sfc/2000/2000010500/d10-35/apcp_sfc_2000010500_c00.nc'
 
-v1 = 'apcp_sfc'; 
-v2 = 'tmp_2m'
+v1 = 'dlwrf_sfc'; 
+v2 = 'ulwrf_sfc'
 fecha = '20100106'
 nens = 'p02'
 a0 = gefs_class(v1, fecha, nens)
 a1 = gefs_class(v2, fecha, nens)
-#print(a1.fechas)
+#print(a0.fechas)
 #print(a1.grupos)
 #print(a1.fechas_d)
-a0.calc_daily()
-a1.calc_daily()
-a0.save_netcdf('test_a0.nc')
-a1.save_netcdf('test_a1.nc')
+print(a0.data[:,90,90])
+#a0.calc_daily()
+#a1.calc_daily()
+#a0.save_netcdf('test_a0.nc')
+#a1.save_netcdf('test_a1.nc')
 #fecha = '20000105'; nens = 'p01'
 
 '''

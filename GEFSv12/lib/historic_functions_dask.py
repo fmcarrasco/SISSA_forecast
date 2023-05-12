@@ -26,7 +26,7 @@ def get_era5hist_data_xarray(nomvar, era5_f, fechas):
         ds_sel = ds_sel.rename({'time':'hist_time0', 'latitude':'lat', 'longitude':'lon'})
         lista_xr.append(ds_sel.tmean)
     
-    out_f = xr.concat(lista_xr, pd.DatetimeIndex(fechas, name='time'))
+    out_f = xr.concat(lista_xr, pd.DatetimeIndex(fechas, name='time')).chunk({'time':-1, 'hist_time0':-1,'lat':30,'lon':30})
     
     return out_f, out_m
 
@@ -52,8 +52,9 @@ def get_gefshist_data_xarray(nomvar, gefs_f, fechas):
         else:
             cnd = [mes - 1, mes, mes + 1]
         lista_datos = []
-        fmod = gefs_f + 'Distrib/' + nomvar + '/' + nomvar + '_' + plazo_str + '.nc'
-        ds = xr.open_dataset(fmod).chunk(chunks={'time':10}) 
+        #fmod = gefs_f + 'Distrib/' + nomvar + '/' + nomvar + '_' + plazo_str + '.nc'
+        fmod = gefs_f + 'Distrib/GEFSv12/' + nomvar + '/' + nomvar + '_' + plazo_str + '.nc'
+        ds = xr.open_dataset(fmod).chunk(chunks={'time':-1, 'lat':30, 'lon':30}) 
         promedio = ds.to_array(dim='new').mean('new')
         ds = ds.assign(promedio=promedio)
         ds_sel = ds.sel(time=np.isin(ds.time.dt.month, cnd))
@@ -62,7 +63,7 @@ def get_gefshist_data_xarray(nomvar, gefs_f, fechas):
         # Calculamos media de ensamble
         #nt, ny, nx = ds_sel.promedio.data.shape
         #out_d[i,0:nt,:,:] = ds_sel.promedio.data
-    out_f = xr.concat(lista_xr, pd.DatetimeIndex(fechas, name='time'))
+    out_f = xr.concat(lista_xr, pd.DatetimeIndex(fechas, name='time')).chunk({'time':-1, 'hist_time1':-1, 'lat':30, 'lon':30})
     return out_f, out_m
 
 

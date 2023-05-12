@@ -24,6 +24,8 @@ class gefs_class:
         self.archivo =  variable + '_' + self.fecha.strftime('%Y%m%d') + '00_' + nens+ '.nc'
         self.archivo1 =  self.carpeta + variable + self.fecha.strftime('/%Y/%Y%m%d00/')+'d1-10/' + self.archivo
         self.archivo2 =  self.carpeta + variable + self.fecha.strftime('/%Y/%Y%m%d00/')+'d10-35/' + self.archivo
+        print(self.archivo1)
+        print(self.archivo2)
         # Check if both files exist
         f1 = not os.path.isfile(self.archivo1)
         f2 = not os.path.isfile(self.archivo2)
