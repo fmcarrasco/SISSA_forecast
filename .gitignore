@@ -11,6 +11,7 @@ __pycache__/
 /ERA5/shera/*
 *.nc
 *.jpg
+*.grb2
 
 # Distribution / packaging
 .Python
