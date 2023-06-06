@@ -35,10 +35,10 @@ def gen_filenames(a_year: int, a_month: int, a_day: int, g_month: int):
     #    print('Cambie el año')
     #    a_year = a_year - 1
     init_data = date(a_year, a_month, a_day)
-    print(init_data)
+    #print(init_data)
     last_date = init_data + relativedelta(months=5)
     last_date = last_date.replace(day=monthrange(last_date.year, last_date.month)[1])
-    print(last_date)
+    #print(last_date)
     days_between = (last_date - init_data).days
 
     for d in range(days_between + 1):

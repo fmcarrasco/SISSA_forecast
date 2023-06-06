@@ -25,7 +25,7 @@ def get_era5hist_data_xarray(nomvar, era5_f, fechas):
         ds_sel = ds.sel(time=np.isin(ds.time.dt.month, cnd))
         ds_sel = ds_sel.rename({'time':'hist_time0', 'latitude':'lat', 'longitude':'lon'})
         lista_xr.append(ds_sel.tmean)
-    
+        ds.close() 
     out_f = xr.concat(lista_xr, pd.DatetimeIndex(fechas, name='time')).chunk({'time':-1, 'hist_time0':-1,'lat':30,'lon':30})
     
     return out_f, out_m
@@ -60,6 +60,7 @@ def get_gefshist_data_xarray(nomvar, gefs_f, fechas):
         ds_sel = ds.sel(time=np.isin(ds.time.dt.month, cnd))
         ds_sel = ds_sel.rename({'time':'hist_time1', 'promedio':nomvar})
         lista_xr.append(ds_sel[nomvar])
+        ds.close()
         # Calculamos media de ensamble
         #nt, ny, nx = ds_sel.promedio.data.shape
         #out_d[i,0:nt,:,:] = ds_sel.promedio.data

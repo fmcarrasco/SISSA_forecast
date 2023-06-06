@@ -1,5 +1,6 @@
 
 from urllib import request
+from urllib.error import HTTPError
 from collections import namedtuple
 from pathlib import Path
 from hashlib import md5
@@ -20,7 +21,7 @@ def set_file_data(file_url: str, year_g: str, month_g: str) -> FileData:
 
 
 def set_file_folder(file_data: FileData) -> Path:
-    folder = Path(f"/Shera/datos/CFSv2/{file_data.year_g}/{file_data.month_g}/{file_data.year}{file_data.month}{file_data.day}")
+    folder = Path(f"/shera/datos/CFSv2/{file_data.year_g}/{file_data.month_g}/{file_data.year}{file_data.month}{file_data.day}")
     #folder = Path(f"/Volumes/Almacenamiento/python_proyects/DATOS/CFSv2/{file_data.year_g}/{file_data.month_g}/{file_data.year}{file_data.month}{file_data.day}")
     #folder = Path(f"descargas_cfs/{file_data.year}/{file_data.month}/{file_data.day}")
     if not folder.exists():
@@ -52,12 +53,15 @@ def show_progress(block_num, block_size, total_size):
 
 
 def download_file_from_url(file_abs_path: Path, file_url: str):
-    request.urlretrieve(
-        url=file_url.strip(),
-        filename=file_abs_path.absolute().as_posix(),
-        reporthook=show_progress)
-    if not check_md5(file_abs_path, file_url):
-        file_abs_path.unlink()
+    try:
+        request.urlretrieve(url=file_url.strip(),
+                filename=file_abs_path.absolute().as_posix(),
+                reporthook=show_progress)
+        if not check_md5(file_abs_path, file_url):
+            file_abs_path.unlink()
+    except HTTPError as err:
+        print(err)
+        pass
 
 
 if __name__ == "__main__":

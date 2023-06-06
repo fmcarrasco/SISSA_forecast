@@ -1,27 +1,31 @@
+import numpy as np
+import dask
+import os
+import pandas as pd
+from netCDF4 import Dataset, num2date
+import datetime as dt
+import xarray as xr
+
+import sys
+sys.path.append('./lib/')
+from historic_functions_dask import get_era5hist_data_xarray
+from historic_functions_dask import get_gefshist_data_xarray
+from correccion_functions import qq_correcion
+
+import time
+
+from dask.distributed import Client
+from dask.distributed import performance_report
+
+import ctypes
+
+def trim_memory() -> int:
+    libc = ctypes.CDLL("libc.so.6")
+    return libc.malloc_trim(0)
+
 
 if __name__ == "__main__":
-    import numpy as np
-    import pandas as pd
-    from netCDF4 import Dataset, num2date
-    import datetime as dt
-    import xarray as xr
-
-    import sys
-    sys.path.append('./lib/')
-    from historic_functions_dask import get_era5hist_data_xarray
-    from historic_functions_dask import get_gefshist_data_xarray
-
-    from correccion_functions import qq_correcion
-
-
-    #import multiprocessing as mp
-    #from pathos.multiprocessing import ProcessingPool as Pool
-
-    import time
-
-    from dask.distributed import Client
-    from dask.distributed import performance_report
-    client = Client()
+    client = Client(memory_limit='3.5GB')
 
     #CORES = mp.cpu_count()
 
@@ -36,44 +40,36 @@ if __name__ == "__main__":
     nomvar = 'tmean'
     #(fecha.month==11) & (fecha.year==2011):
     for fecha in [dt.datetime(2011,2,16)]:
-        if fecha == dt.datetime(2011,2,16):
-            print(fecha)
-            yr = fecha.strftime('%Y')
-            fp = fecha.strftime('%Y%m%d')
-            fechas = [(fecha+dt.timedelta(days=i)) for i in range(0,34)]
-            tiempos = pd.date_range(fecha, periods=34)
-            tiempo_referencia = pd.Timestamp(fecha)
-            # Lectura de datos historicos ERA5
-            data_era5, i_era5= get_era5hist_data_xarray(nomvar, era5_f, fechas)
-            # Lectura de datos historicos GEFSv12
-            data_gefs, i_gefs= get_gefshist_data_xarray(nomvar, gefs_f, fechas)
-            print('Extrayendo datos del pronostico')
-            #archivos = [gefs_f + 'Diarios/'+ nomvar + '/' + fp +'/' + nomvar + '_' + fp + '_' + ens + '.nc' for ens in ensambles]
-            archivos = [gefs_f + 'Diarios/GEFSv12/'+ nomvar + '/' + yr + '/' + fp +'/' + nomvar + '_' + fp + '_' + ens + '.nc' for ens in ensambles]
+        print(fecha)
+        yr = fecha.strftime('%Y')
+        fp = fecha.strftime('%Y%m%d')
+        fechas = [(fecha+dt.timedelta(days=i)) for i in range(0,34)]
+        tiempos = pd.date_range(fecha, periods=34)
+        tiempo_referencia = pd.Timestamp(fecha)
+        # Lectura de datos historicos ERA5
+        data_era5, i_era5= get_era5hist_data_xarray(nomvar, era5_f, fechas)
+        # Lectura de datos historicos GEFSv12
+        data_gefs, i_gefs= get_gefshist_data_xarray(nomvar, gefs_f, fechas)
+        print('Extrayendo datos del pronostico')
+        #archivos = [gefs_f + 'Diarios/'+ nomvar + '/' + fp +'/' + nomvar + '_' + fp + '_' + ens + '.nc' for ens in ensambles]
+        archivos = [gefs_f + 'Diarios/GEFSv12/'+ nomvar + '/' + yr + '/' + fp +'/' + nomvar + '_' + fp + '_' + ens + '.nc' for ens in ensambles]
+        list_trabajos = []
+        start = time.time()
+        for archivo in archivos:
+            ds = xr.open_dataset(archivo, chunks={'time':-1,'lat':30, 'lon':30})
+            out = qq_correcion(ds.tmean, data_era5, data_gefs)
+            print('############### Archivo Correccion ###################')
+            nfile = os.path.basename(archivo)
+            out.to_netcdf('./'+nfile, compute=True)
+            #list_trabajos.append(out.to_netcdf('./'+nfile, compute=False))
+            #client.run(trim_memory)
 
-            for archivo in archivos[0:1]:
-                ds = xr.open_dataset(archivo, chunks={'time':-1,'lat':30, 'lon':30})
-                #print(ds.tmean)
-                #print(type(ds))
-                print(ds.tmean[:,10,10].values)
-                start = time.time()
-                out = qq_correcion(ds.tmean, data_era5, data_gefs)
-                print('############### Archivo Correccion ###################')
-                #print(out[10,10,:].data.compute())
-                with performance_report(filename="dask-report.html"):
-                    out.to_netcdf('./test_correccion.nc', compute=True)
-                end = time.time()
-                minutos = np.round((end-start)/60., 3)
-                print('Se demoro en corregir', minutos, ' minutos')
-                #print(out.tmean[10,10,:].values)
-                exit()
-            #####################################
-            end = time.time()
-            minutos = np.round((end-start)/60., 3)
-            print('Tiempo de demora: ', minutos, ' minutos.')
+        #####################################
+        #datasets = dask.compute(list_trabajos)
     ############################
     end = time.time()
     minutos = np.round((end-start)/60., 3)
     horas = np.round(minutos/60., 3)
     print('Tiempo de demora: ', minutos, ' minutos.')
     print('Tiempo de demora: ', horas, ' horas.')
+    client.shutdown()

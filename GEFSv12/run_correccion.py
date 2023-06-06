@@ -4,6 +4,8 @@ from netCDF4 import Dataset, num2date
 import datetime as dt
 import xarray as xr
 
+from dask.distributed import Client, performance_report
+
 import sys
 sys.path.append('./lib/')
 from historic_functions_dask import get_era5hist_data_xarray
@@ -17,7 +19,7 @@ from correccion_functions import qq_correcion
 
 import time
 
-
+client = Client()
 #CORES = mp.cpu_count()
 
 fechas = pd.date_range('2000-01-05', '2019-12-25', freq='W-WED')
@@ -55,7 +57,8 @@ for fecha in [dt.datetime(2011,2,16)]:
             out = qq_correcion(ds.tmean, data_era5, data_gefs)
             print('############### Archivo Correccion ###################')
             #print(out[10,10,:].data.compute())
-            out.to_netcdf('./test_correccion.nc', compute=True)
+            with performance_report(filename='dask_report.html'):
+                out.to_netcdf('./test_correccion.nc', compute=True)
             end = time.time()
             minutos = np.round((end-start)/60., 3)
             print('Se demoro en corregir', minutos, ' minutos')
