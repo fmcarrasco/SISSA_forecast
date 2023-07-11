@@ -13,12 +13,12 @@ start = time.time()
 variables = ['apcp_sfc', 'dlwrf_sfc', 'dswrf_sfc', 'pres_sfc', 'tmax_2m', 'tmin_2m',
              'tmp_2m', 'ulwrf_sfc', 'ugrd_hgt', 'vgrd_hgt']
 
-var = variables[7]
+var = variables[8]
 
-datavar = {'nvar': 'ulwrf_sfc', 'standard_name': 'surface_upward_longwave_radiation_flux',
-        'long_name': '6hour mean Upward Longwave Radiation Flux at Surface'}
+datavar = {'nvar': 'ugrd_hgt', 'standard_name': 'eastward_wind ',
+        'long_name': 'u-wind component at fixed heights 10m'}
 #2000-01-05
-fechas = pd.date_range('2018-10-24', '2019-12-25', freq='W-WED')
+fechas = pd.date_range('2018-10-03', '2019-12-25', freq='W-WED')
 ensembles = ['c00', 'p01', 'p02', 'p03', 'p04', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10']
 
 carpeta = '/shera/datos/SISSA/GEFSv12/'

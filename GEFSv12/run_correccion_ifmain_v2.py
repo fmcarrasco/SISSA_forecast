@@ -25,7 +25,18 @@ def trim_memory() -> int:
 
 
 if __name__ == "__main__":
-    cluster = LocalCluster(n_workers=1, threads_per_worker=4, memory_limit='1Gb')
+
+    #try:
+    #    client = Client('tcp://localhost:8787', timeout='2s')
+    #except OSError:
+    #    cluster = LocalCluster(scheduler_port=8787, n_workers=4, threads_per_worker=1, memory_limit='1Gb')
+    #    client = Client(cluster)
+    #client.restart()
+    #print(client)
+    #client.shutdown()
+
+    #exit()
+    cluster = LocalCluster(n_workers=4, threads_per_worker=1, memory_limit='1Gb')
     client = Client(cluster)
 
     #CORES = mp.cpu_count()
@@ -49,38 +60,22 @@ if __name__ == "__main__":
         tiempos = pd.date_range(fecha, periods=34)
         tiempo_referencia = pd.Timestamp(fecha)
         # Lectura de datos historicos ERA5
-        data_era5, i_era5= get_era5hist_data_xarray(nomvar, era5_f, fechas)
+        #data_era5, i_era5= get_era5hist_data_xarray(nomvar, era5_f, fechas)
         # Lectura de datos historicos GEFSv12
-        data_gefs, i_gefs= get_gefshist_data_xarray(nomvar, gefs_f, fechas)
+        #data_gefs, i_gefs= get_gefshist_data_xarray(nomvar, gefs_f, fechas)
         print('Extrayendo datos del pronostico')
         #archivos = [gefs_f + 'Diarios/'+ nomvar + '/' + fp +'/' + nomvar + '_' + fp + '_' + ens + '.nc' for ens in ensambles]
         archivos = [gefs_f + 'Diarios/GEFSv12/'+ nomvar + '/' + yr + '/' + fp +'/' + nomvar + '_' + fp + '_' + ens + '.nc' for ens in ensambles]
         list_trabajos = []
         start = time.time()
-        x1 = client.scatter([data_gefs], broadcast=True)
-        x2 = client.scatter([data_era5], broadcast=True)
+        #x1 = client.scatter(data_gefs)
+        #x2 = client.scatter(data_era5)
         #print(['./' + os.path.basename(archivo) for archivo in archivos])
         open_kwargs = dict(chunks={'time':-1,'lat':30,'lon':30})
         open_tasks = [dask.delayed(xr.open_dataset)(f,**open_kwargs) for f in archivos]
-        tasks = [dask.delayed(qq_correcion)(task.tmean, x1, x2) for task in open_tasks]
-        save_tasks = [dask.delayed(task.to_netcdf('./v1_' + os.path.basename(archivos[ii]))) for ii, task in enumerate(tasks)]
+        tasks = [dask.delayed(qq_correcion_v2)(task.tmean, nomvar, fechas) for task in open_tasks]
+        save_tasks = [dask.delayed(task.to_netcdf('./' + os.path.basename(archivos[ii]))) for ii, task in enumerate(tasks)]
         datasets = dask.compute(save_tasks)
-        '''
-        for archivo in archivos:
-            ds = xr.open_dataset(archivo, chunks={'time':-1,'lat':30, 'lon':30})
-            x0 = client.scatter(ds)
-            print(x0)
-            print(x1)
-            print(x2)
-            #out = qq_correcion(ds.tmean, data_era5, data_gefs)
-            out = client.submit(qq_correcion, x0, x1, x2).result()
-            print(out)
-            print('############### Archivo Correccion ###################')
-            nfile = os.path.basename(archivo)
-            #out.to_netcdf('./'+nfile, compute=True)
-            #list_trabajos.append(out.to_netcdf('./'+nfile, compute=False))
-            #client.run(trim_memory)
-        '''
         #####################################
         #datasets = dask.compute(list_trabajos)
         ############################

@@ -27,9 +27,9 @@ fechas = pd.read_csv('fechas_descarga_CFSR.csv')
 variables = ['t2']
 
 
-for year in years[0:1]:
+for year in years[1:2]:
     print('Working in year ' + year)
-    for index, row in fechas.iloc[24:,:].iterrows():
+    for index, row in fechas.iloc[33:,:].iterrows():
         year_g = year
         mes_g = str(row['mes_guia']).zfill(2)
         mes_d = str(row['mes_descarga']).zfill(2)
@@ -42,8 +42,10 @@ for year in years[0:1]:
         os.makedirs(carpeta_s, exist_ok=True)
         # URL de localilizacion de archivo
         urls = list(gen_urls(int(year), row['mes_descarga'], row['dia_descarga'], row['mes_guia'], url_base))
-        print(urls[0])
-        
+        #print(urls[0])
+        #i1 = [i for i, s in enumerate(urls) if 'flxf2001103112.01.2001052106' in s]
+        #i2 = [i for i, s in enumerate(urls) if 'flxf2001103112.01.2001052100' in s]
+        #print(urls[i2[0]])
         for n, url in enumerate(urls):
             print(f"Procesando archivo {n + 1} de {len(urls)}.")
             print(url)

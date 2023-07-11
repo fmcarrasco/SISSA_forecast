@@ -60,4 +60,16 @@ def qq_correcion(x,y,z):
     return xr.apply_ufunc(series_qqcorr, x, y, z, input_core_dims=[['time'], ['time', 'hist_time0'], ['time', 'hist_time1']],
                           output_core_dims = [['time']], dask='parallelized',vectorize=True,  # !Important!
                           output_dtypes=[float])
-    
+
+
+def qq_correcion_v2(x,nomvar, fechas):
+    from historic_functions_dask import get_era5hist_data_xarray
+    from historic_functions_dask import get_gefshist_data_xarray
+
+    era5_f = '/shera/datos/SISSA/Diarios/ERA5/'
+    gefs_f = '/shera/datos/SISSA/'
+    y, i_era5 = get_era5hist_data_xarray(nomvar, era5_f, fechas)
+    z, i_gefs = get_gefshist_data_xarray(nomvar, gefs_f, fechas)
+    return xr.apply_ufunc(series_qqcorr, x, y, z, input_core_dims=[['time'], ['time', 'hist_time0'], ['time', 'hist_time1']],
+                          output_core_dims = [['time']], dask='parallelized',vectorize=True,  # !Important!
+                          output_dtypes=[float])

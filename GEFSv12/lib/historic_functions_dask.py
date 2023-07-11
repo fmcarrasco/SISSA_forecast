@@ -7,6 +7,30 @@ import dask.array as da
 from netCDF4 import Dataset, num2date
 
 
+#def get_era5hist_data_xarray(nomvar, era5_f, fechas):
+#    print('## Extrayendo datos ERA5 ##')
+#    meses = np.array([fecha.month for fecha in fechas])
+#    out_m = np.array([str(mes) for mes in meses])
+#    lista_xr = []
+#    for i, mes in enumerate(meses):
+#        if mes - 1 <= 0:
+#            cnd = [12, 1, 2]
+#        elif mes + 1 >= 13:
+#            cnd = [11, 12, 1]
+#        else:
+#            cnd = [mes - 1, mes, mes + 1]
+#        lista_datos = []
+#        archivos = [era5_f + nomvar + '/' + str(year) + '.nc' for year in np.arange(2000,2010)]
+#        ds = xr.open_mfdataset(archivos, parallel=True, autoclose=True)
+#        ds_sel = ds.sel(time=np.isin(ds.time.dt.month, cnd))
+#        ds_sel = ds_sel.rename({'time':'hist_time0', 'latitude':'lat', 'longitude':'lon'})
+#        lista_xr.append(ds_sel.tmean)
+#        print(archivos)
+#    out_f = xr.concat(lista_xr, pd.DatetimeIndex(fechas, name='time')).chunk({'time':-1, 'hist_time0':-1,'lat':30,'lon':30})
+#    
+#    return out_f, out_m
+
+
 def get_era5hist_data_xarray(nomvar, era5_f, fechas):
     print('## Extrayendo datos ERA5 ##')
     meses = np.array([fecha.month for fecha in fechas])
@@ -21,14 +45,17 @@ def get_era5hist_data_xarray(nomvar, era5_f, fechas):
             cnd = [mes - 1, mes, mes + 1]
         lista_datos = []
         archivos = [era5_f + nomvar + '/' + str(year) + '.nc' for year in np.arange(2000,2010)]
-        ds = xr.open_mfdataset(archivos, parallel=True)
-        ds_sel = ds.sel(time=np.isin(ds.time.dt.month, cnd))
-        ds_sel = ds_sel.rename({'time':'hist_time0', 'latitude':'lat', 'longitude':'lon'})
-        lista_xr.append(ds_sel.tmean)
-        ds.close() 
+        for archivo in archivos:
+            ds = xr.open_dataset(archivo).chunk(chunks={'time':-1, 'latitude':30, 'longitude':30}) 
+            ds_sel = ds.sel(time=np.isin(ds.time.dt.month, cnd))
+            ds_sel = ds_sel.rename({'time':'hist_time0', 'latitude':'lat', 'longitude':'lon'})
+            lista_datos.append(ds_sel.tmean)
+        out_prim = xr.concat(lista_datos, 'hist_time0')
+        lista_xr.append(out_prim)
     out_f = xr.concat(lista_xr, pd.DatetimeIndex(fechas, name='time')).chunk({'time':-1, 'hist_time0':-1,'lat':30,'lon':30})
     
     return out_f, out_m
+
 
 def get_era5_serie(d_era5,i,j):
     return d_era5[:,:,j,i]

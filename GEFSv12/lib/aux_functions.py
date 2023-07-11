@@ -21,7 +21,6 @@ def get_cut_grib(nfile):
     
     ds = xr.open_dataset(nfile, engine='pynio')
     var = list(ds.data_vars)[0]  # Nos quedamos con la primera variable
-    
     #----- Extraccion de tiempos -----
     seg_aux = ds.forecast_time0.values
     horas = [(x.astype('timedelta64[h]')/np.timedelta64(1, 'h')) for x in seg_aux]
@@ -38,7 +37,12 @@ def get_cut_grib(nfile):
     min_lon = -81.; max_lon = -34.
     # Cambio 0-360 a -180-180 en Longitudes
     ds.coords['lon_0'] = (ds.coords['lon_0'] + 180) % 360 - 180
-    cropped_ds = ds.sel(lat_0=slice(min_lat, max_lat), lon_0=slice(min_lon, max_lon))
+    if var == 'UGRD_P1_L103_GLL0':
+        cropped_ds = ds.sel(lat_0=slice(min_lat, max_lat), lon_0=slice(min_lon, max_lon), lv_HTGL0=10.)
+    elif var == 'VGRD_P1_L103_GLL0':
+        cropped_ds = ds.sel(lat_0=slice(min_lat, max_lat), lon_0=slice(min_lon, max_lon), lv_HTGL0=10.)
+    else:
+        cropped_ds = ds.sel(lat_0=slice(min_lat, max_lat), lon_0=slice(min_lon, max_lon))
     # Extraemos datos de Lon/Lat recortados
     lon = cropped_ds.coords['lon_0'].to_numpy()
     lat = cropped_ds.coords['lat_0'].to_numpy()
