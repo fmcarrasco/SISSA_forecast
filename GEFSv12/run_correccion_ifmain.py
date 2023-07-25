@@ -27,7 +27,7 @@ def trim_memory() -> int:
 if __name__ == "__main__":
     cluster = LocalCluster(n_workers=1, threads_per_worker=4, memory_limit='1Gb')
     client = Client(cluster)
-
+    print(client.scheduler_info())
     #CORES = mp.cpu_count()
 
     fechas = pd.date_range('2000-01-05', '2019-12-25', freq='W-WED')
