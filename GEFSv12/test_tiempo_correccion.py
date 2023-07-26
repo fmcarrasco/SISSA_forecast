@@ -13,7 +13,7 @@ sys.path.append('./lib/')
 from historic_functions_dask import get_era5hist_data_xarray
 from historic_functions_dask import get_gefshist_data_xarray
 
-from correccion_functions import qq_correcion
+from correccion_functions import qq_correcion, series_qqcorr
 
 
 #import multiprocessing as mp
@@ -40,7 +40,7 @@ def run():
     os.makedirs(carpeta_corr, exist_ok=True)
     #(fecha.month==11) & (fecha.year==2011):
     startf = time.time()
-    for fecha in fechas[5:6]:
+    for fecha in fechas[4:5]:
         print(fecha)
         yr = fecha.strftime('%Y')
         fp = fecha.strftime('%Y%m%d')
@@ -56,29 +56,19 @@ def run():
         archivos = [gefs_f + 'Diarios/GEFSv12/'+ nomvar + '/' + yr + '/' + fp +'/' + nomvar + '_' + fp + '_' + ens + '.nc' for ens in ensambles]
         for archivo in archivos[0:1]:
             print('Trabajando en: ', archivo)
-            with performance_report(filename="dask-report-1archivo.html"):
-                ds = xr.open_dataset(archivo, chunks={'time':-1,'lat':30, 'lon':30})
-            #ds_copy = ds.copy(deep=True)
-            #print(ds.tmean)
-            #print(type(ds))
-            #print(ds.tmean[:,10,10].values)
-                start = time.time()
-                out = qq_correcion(ds[nomvar], data_era5, data_gefs)
-                out = out.transpose("time","lat","lon")
-            #ds_copy[nomvar] = out
-                print('############### Archivo Correccion ###################')
-            #print(out[10,10,:].data.compute())
-            #with performance_report(filename='dask_report_v2.html'):
-                carpeta_dato = carpeta_corr + yr + '/' + fp + '/'
-                os.makedirs(carpeta_dato, exist_ok=True)
-                n_archivo = carpeta_dato + 'test_' + os.path.basename(archivo)
-                write_job = out.to_netcdf(n_archivo, compute=False)
-                with ProgressBar():
-                    print(f"Escribiendo a {n_archivo}")
-                    write_job.compute()
-                end = time.time()
-                minutos = np.round((end-start)/60., 3)
-                print('Se demoro en corregir', minutos, ' minutos')
+            ds = xr.open_dataset(archivo, chunks={'time':-1,'lat':30, 'lon':30})
+            x1 = ds.tmean[:,10,10].values
+            x2 = data_era5[:,:,10,10].values
+            x3 = data_gefs[:,:,10,10].values
+            start = time.time()
+            print('Empezando series_qqcorr')
+            with performance_report(filename="dask-report-test-qqcorr.html"):
+                salida = series_qqcorr(x1,x2,x3) 
+            end = time.time()
+            segundos = np.round(end-start, 3)
+            minutos = np.round((end-start)/60., 3)
+            print('Se demoro series_qqcorr', segundos, ' segundos')
+            print('Se demoro series_qqcorr', minutos, ' minutos')
             #print(out.tmean[10,10,:].values)
             #exit()
         #####################################
