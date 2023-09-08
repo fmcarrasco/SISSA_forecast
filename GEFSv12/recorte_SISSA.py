@@ -11,14 +11,14 @@ from aux_functions import get_cut_grib, save_netcdf
 start = time.time()
 
 variables = ['apcp_sfc', 'dlwrf_sfc', 'dswrf_sfc', 'pres_sfc', 'tmax_2m', 'tmin_2m',
-             'tmp_2m', 'ulwrf_sfc', 'ugrd_hgt', 'vgrd_hgt']
+             'tmp_2m', 'ulwrf_sfc', 'ugrd_hgt', 'vgrd_hgt', 'spfh_2m']
 
-var = variables[9]
+var = variables[10]
 
-datavar = {'nvar': 'vgrd_hgt', 'standard_name': 'northward_wind ',
-        'long_name': 'v-wind component at fixed heights 10m'}
+datavar = {'nvar': 'spfh_2m', 'standard_name': 'specific_humidity',
+        'long_name': '2-Meter Specific Humidity'}
 #2000-01-05
-fechas = pd.date_range('2019-08-07', '2019-12-25', freq='W-WED')
+fechas = pd.date_range('2017-04-05', '2019-12-25', freq='W-WED')
 ensembles = ['c00', 'p01', 'p02', 'p03', 'p04', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10']
 
 carpeta = '/shera/datos/SISSA/GEFSv12/'
@@ -51,9 +51,9 @@ for fecha in fechas:
             datavar['units'] =  units,
             datavar['valores'] = datos
             save_netcdf(carpeta_nc + file_nc, tiempos, lat, latb, lon, lonb, datavar)
+            del tiempos, lat, latb, lon, lonb, datos, units
         #------ Recorte para archivo 10-35 dias
         pesoMB = np.round(os.stat(f2).st_size/1024.0/1024.0,2)
-        tiempos, lat, latb, lon, lonb, datos, units = get_cut_grib(f2)
         if pesoMB < 1.:
             print('Error en archivo GRIB')
             print(f2)
@@ -67,6 +67,7 @@ for fecha in fechas:
             datavar['valores'] = datos
             save_netcdf(carpeta_nc + file_nc, tiempos, lat, latb, lon, lonb, datavar)
             print('Creating file: ', carpeta_nc + file_nc)
+            del tiempos, lat, latb, lon, lonb, datos, units
         print('------------------------------------------')
 
 end = time.time()

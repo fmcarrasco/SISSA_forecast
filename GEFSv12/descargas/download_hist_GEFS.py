@@ -19,13 +19,17 @@ y con pronósticos hasta 35 dias.
 
 Las variables disponibles de interes para el proyecto son:
 
-1) apcp_sfc: Total precipitation (kg m-2, i.e., mm) sum over the last 6-h period
-2) tmp_2m: 2-meter temperature (K)
-3) pres_sfc: Surface pressure (Pa)
-4) dswrf_sfc: Downward short-wave radiation flux at the surface (W m-2) average in last 6-h period
-5) dlwrf_sfc: Downward long-wave radiation flux at the surface (W m-2) average in last 6-h period
-6) ugrd_hgt: U component at 10m/100m (m/s)
-7) vgrd_hgt: V componente at 10m/100m (m/s)
+1 ) apcp_sfc: Total precipitation (kg m-2, i.e., mm) sum over the last 6-h period
+2 ) tmp_2m: 2-meter temperature (K)
+3 ) tmin_2m: 2-meter min temperature (K)
+4 ) tmax_2m: 2-meter max temperature (K)
+5 ) pres_sfc: Surface pressure (Pa)
+6 ) dswrf_sfc: Downward short-wave radiation flux at the surface (W m-2) average in last 6-h period
+7 ) dlwrf_sfc: Downward long-wave radiation flux at the surface (W m-2) average in last 6-h period
+8 ) ulwrf_sfc: Upward long-wave radiation flux at the surface (W m-2) average in last 6-h period
+9 ) ugrd_hgt: U component at 10m/100m (m/s)
+10) vgrd_hgt: V componente at 10m/100m (m/s)
+11) spfh_2m: 2m specific humidity (kg kg-1)
 
 Falta por ver: Presion de vapor, otros?
 

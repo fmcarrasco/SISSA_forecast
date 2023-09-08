@@ -7,8 +7,8 @@ import time
 import os
 start = time.time()
 
-v1 = 'tmp_2m';
-v2 = 'tmean'
+v1 = 'dswrf_sfc';
+v2 = 'ROCsfc'
 fechas = pd.bdate_range(start='2000-01-05', end='2019-12-25', freq='W-WED')
 ensembles = ['c00', 'p01', 'p02', 'p03', 'p04', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10']
 
@@ -28,6 +28,7 @@ for ffecha in fechas:
         else:
             a0.calc_daily()
             ncfile =  carpeta_f + v2 + '_' + fecha + '_' + nens + '.nc'
+            print('### Guardando archivo diario', ncfile, ' ###')
             a0.save_netcdf(ncfile)
 
 

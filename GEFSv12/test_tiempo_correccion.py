@@ -5,7 +5,7 @@ from netCDF4 import Dataset, num2date
 import datetime as dt
 import xarray as xr
 
-from dask.distributed import Client, performance_report
+from dask.distributed import Client, performance_report, LocalCluster
 from dask.diagnostics import ProgressBar
 
 import sys
@@ -23,7 +23,10 @@ import time
 
 
 def run():
-    client = Client()
+
+    cluster = LocalCluster(n_workers=1, threads_per_worker=5)
+    client = Client(cluster)
+    #client = Client()
     #CORES = mp.cpu_count()
 
     fechas = pd.date_range('2010-01-06', '2019-12-25', freq='W-WED')
@@ -57,9 +60,16 @@ def run():
         for archivo in archivos[0:1]:
             print('Trabajando en: ', archivo)
             ds = xr.open_dataset(archivo, chunks={'time':-1,'lat':30, 'lon':30})
-            x1 = ds.tmean[:,10,10].values
-            x2 = data_era5[:,:,10,10].values
-            x3 = data_gefs[:,:,10,10].values
+            x1 = ds.tmean[:,:,:].values
+            np.save('prono_3d.npy', x1)
+            del x1
+            x2 = data_era5[:,:,:,:].values
+            np.save('era5_hist_4d.npy', x2)
+            del x2
+            x3 = data_gefs[:,:,:,:].values
+            np.save('gefs_hist_4d.npy', x3)
+            del x3
+            exit()
             start = time.time()
             print('Empezando series_qqcorr')
             with performance_report(filename="dask-report-test-qqcorr.html"):
