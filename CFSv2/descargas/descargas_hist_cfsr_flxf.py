@@ -29,7 +29,7 @@ variables = ['t2']
 
 for year in years[3:4]:
     print('Working in year ' + year)
-    for index, row in fechas.iloc[0::,:].iterrows():
+    for index, row in fechas.iloc[2::,:].iterrows():
         year_g = year
         mes_g = str(row['mes_guia']).zfill(2)
         mes_d = str(row['mes_descarga']).zfill(2)
@@ -46,7 +46,7 @@ for year in years[3:4]:
         # URL de localilizacion de archivo
         urls = list(gen_urls(int(year), row['mes_descarga'], row['dia_descarga'], row['mes_guia'], url_base))
         #print(urls[0])
-        #i1 = [i for i, s in enumerate(urls) if 'flxf2003022706.01.2002091818' in s]
+        #i1 = [i for i, s in enumerate(urls) if 'flxf2003021200.01.2002121700' in s]
         #i2 = [i for i, s in enumerate(urls) if 'flxf2001103112.01.2001052100' in s]
         #for n, url in enumerate(urls[i1[0]:]):
         for n, url in enumerate(urls):
@@ -57,6 +57,7 @@ for year in years[3:4]:
             file_path = set_file_abs_path(url, year_g, mes_g)
             if not file_path.exists() or not check_md5(file_path, url):
                 download_file_from_url(file_path, url)
+            print('\n')
             time.sleep(3)
 
 print('######### TERMINO LA DESCARGA #########')

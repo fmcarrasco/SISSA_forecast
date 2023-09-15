@@ -79,9 +79,9 @@ class gefs_class:
             v_arch = 'dlwrf_sfc'
         elif variable == 'rel_hum':
             v_arch = 'spfh_2m'
-        elif variable == 'dew_p':
+        elif variable == 'tdmean':
             v_arch = 'tmp_2m'
-        elif variable == 'vap_press':
+        elif variable == 'pvmean':
             v_arch = 'tdmean'
         else:
             v_arch = variable
@@ -103,7 +103,7 @@ class gefs_class:
             self.continuar = False
             self.variable_names = {'apcp_sfc':'rain', 'tmp_2m':'tmean', 'tmax_2m':'tmax', 'tmin_2m':'tmin', 'pres_sfc':'spmean',
                     'ugrd_hgt':'u10mean', 'vgrd_hgt':'v10mean', 'wspd':'u10', 'dswrf_sfc':'ROCsfc', 'ulwrf_sfc':'uROLsfc',
-                    'dlwrf_sfc':'dROLsfc', 'LWnet':'ROLnet', 'rel_hum':'rh'}
+                    'dlwrf_sfc':'dROLsfc', 'LWnet':'ROLnet', 'rel_hum':'rh', 'dew_p':'tdmean'}
             self.long_names = {'apcp_sfc':'daily precipitation 12UTC 12UTC', 'tmp_2m':'2m daily mean temperature 0-23 UTC',
                                'tmax_2m':'2m max temperature 0-23 UTC', 'tmin_2m':'2m min temperature 0-23 UTC',
                                'pres_sfc':'mean surface pressure 0-23 UTC', 'ugrd_hgt':'10m zonal mean wind 0-23 UTC',
@@ -112,14 +112,15 @@ class gefs_class:
                                'ulwrf_sfc':'Upward Surface Short Wave radiation 0-23 UTC',
                                'dlwrf_sfc':'Downward Surface Short Wave radiation 0-23 UTC',
                                'LWnet':'Surface Long Wave NET radiation 0-23 UTC',
-                               'rel_hum':'2m mean relative humidity'}
+                               'rel_hum':'2m mean relative humidity',
+                               'dew_p':'2m mean Dewpoint Temperature 0-23 UTC'}
             self.std_names = {'apcp_sfc':'daily_precipitation', 'tmp_2m':'mean_air_temperature',
                               'tmax_2m':'max_air_temperature', 'tmin_2m':'min_air_temperature',
                               'pres_sfc':'mean_surface_pressure', 'ugrd_hgt':'mean_zonal_wind',
                               'vgrd_hgt':'mean_meridional_wind', 'wspd': 'mean_wind_speed',
                               'dswrf_sfc':'surface_downward_shortwave_radiation','ulwrf_sfc':'upward_surface_longwave_radiation',
                               'dlwrf_sfc':'downward_surface_longwave_radiation', 'LWnet':'surface_longwave_net_radiation',
-                              'rel_hum': 'mean_relative_humidity'}
+                              'rel_hum': 'mean_relative_humidity', 'dew_p':'mean_dewpoint_temperature'}
             self.get_latlon()
             self.get_time()
             self.get_variable()
@@ -194,10 +195,10 @@ class gefs_class:
     def load_daylyfunc(self):
         self.fun_daily = {'tmp_2m': calc_tmean, 'apcp_sfc':calc_precip, 'tmax_2m':calc_tmax, 'tmin_2m':calc_tmin, 'pres_sfc':calc_spmean,
                 'ugrd_hgt':calc_u10mean, 'vgrd_hgt':calc_u10mean, 'wspd': calc_u10, 'dswrf_sfc':calc_ROCsfc,'LWnet':calc_ROLnet,
-                'rel_hum':calc_rh}
+                'rel_hum':calc_rh, 'dew_p':calc_tdmean}
         self.units_daily = {'tmp_2m':'Celsius', 'apcp_sfc':'mm', 'tmax_2m':'Celsius', 'tmin_2m':'Celsius','pres_sfc':'Pa',
                 'ugrd_hgt':'m s-1', 'vgrd_hgt':'m s-1', 'wspd':'m s-1', 'dswrf_sfc':'J m-2', 'ulwrf_sfc': 'J m-2', 'dlwrf_sfc':'J m-2',
-                'LWnet':'J m-2', 'rel_hum':'%'}
+                'LWnet':'J m-2', 'rel_hum':'%', 'dew_p':'Celsius'}
         self.longname_daily = {'tmp_2m': 'mean temperature at 2m 0-23 UTC', 'apcp_sfc': 'total precipitation 12-12 UTC',
                                'tmax_2m': 'max temperature at 2m 0-23 UTC', 'tmin_2m': 'min temperature at 2m 0-23 UTC',
                                'pres_sfc': 'mean surface pressure 0-23 UTC', 'ugrd_hgt': 'mean zonal wind at 10m 0-23 UTC',
@@ -206,7 +207,8 @@ class gefs_class:
                                'ulwrf_sfc': 'Surface Upward Longwave radiation 0-23 UTC', 
                                'dlwrf_sfc': 'Surface Downward Longwave radiation 0-23 UTC', 
                                'LWnet':'Surface Longwave NET radiation 0-23 UTC',
-                               'rel_hum':'mean 2m Relative Humidity 0-23 UTC'}
+                               'rel_hum':'mean 2m Relative Humidity 0-23 UTC',
+                               'dew_p':'mean 2m Dewpoint Temperature 0-23 UTC'}
 
     def calc_daily(self):
         self.load_daylyfunc()
