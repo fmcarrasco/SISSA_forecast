@@ -14,7 +14,7 @@ def ecdf_numpy_val(x, n, v):
 @jit(nopython=True)
 def qq_corr(val, era_hist, gefs_hist):
     if np.isnan(val):
-        return np.nan
+        corr_o = np.nan
     else:
         cdf_limit = 0.9999999
         df_h = era_hist[np.logical_not(np.isnan(era_hist))]
@@ -24,7 +24,7 @@ def qq_corr(val, era_hist, gefs_hist):
         if p1 > cdf_limit:
             p1 = cdf_limit
         corr_o = np.quantile(df_h, p1)
-        return corr_o
+    return corr_o
 
 @jit(nopython=True)
 def cycle_matrix(prono, gefs, era5):
@@ -33,6 +33,6 @@ def cycle_matrix(prono, gefs, era5):
         val = prono[index[0], index[1]]
         ghist = gefs[:, index[0], index[1]]
         ehist = era5[:, index[0], index[1]]
-        prono_corr[index[0], index[1]] = qq_corr(val, ghist, ehist)
+        prono_corr[index[0], index[1]] = qq_corr(val, ehist, ghist)
     return prono_corr
 
