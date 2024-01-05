@@ -18,22 +18,17 @@ from historic_functions_dask import get_era5hist_mes
 import time
 
 def run():
-    #cluster = LocalCluster(n_workers=1, threads_per_worker=5)
-    #client = Client(cluster)
-    #print(cluster)
-    #print(client)
-
     #gefs_f = '/Volumes/Almacenamiento/python_proyects/DATOS/SISSA/GEFSv12/'
     gefs_f = '/shera/datos/SISSA/'
     #era5_f = '/Volumes/Almacenamiento/python_proyects/DATOS/SISSA/ERA5/'
     era5_f = '/shera/datos/SISSA/Diarios/ERA5/'
-    nomvar = 'tmean'
+    nomvar = 'v10mean'
     gefs_distrib = gefs_f + 'Distrib/GEFSv12/' + nomvar + '/'
     era5_distrib = gefs_f + 'Distrib/ERA5/' + nomvar + '/'
     os.makedirs(gefs_distrib, exist_ok=True)
     os.makedirs(era5_distrib, exist_ok=True)
     startf = time.time()
-    for plazo in np.arange(1,34):
+    for plazo in np.arange(0,34):
         print('Trabajando en plazo:', plazo)
         for mes in np.arange(1,13):
             str_mes = str(mes).zfill(2)
@@ -42,11 +37,14 @@ def run():
             # Lectura de datos historicos GEFSv12
             data_gefs = get_gefshist_plazo_mes(nomvar, plazo, gefs_f, mes)
             ncfile = gefs_distrib + nomvar + '_p' + str_plazo + '_m' + str_mes + '.nc' 
+            print('Guardando', ncfile)
             data_gefs.to_netcdf(ncfile)
             #h0 = data_gefs.values[:,:,:]
-            #data_era5 = get_era5hist_mes(nomvar, era5_f, mes)
-            #ncfile = era5_distrib + nomvar + '_m' + str_mes + '.nc' 
-            #data_era5.to_netcdf(ncfile)
+            if plazo == 0:
+                data_era5 = get_era5hist_mes(nomvar, era5_f, mes)
+                ncfile = era5_distrib + nomvar + '_m' + str_mes + '.nc' 
+                print('Guardando', ncfile)
+                data_era5.to_netcdf(ncfile)
             #h1 = data_era5.values[:,:,:]
 ############################
     endf = time.time()

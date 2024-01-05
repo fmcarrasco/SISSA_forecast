@@ -24,11 +24,12 @@ url_base = "https://www.ncei.noaa.gov/data/climate-forecast-system/access/refore
 years = [str(yr) for yr in range(2000,2012)]
 months = [str(mo).zfill(2) for mo in range(1,13)]
 fechas = pd.read_csv('fechas_descarga_CFSR.csv')
+variables = ['t2']
 
 
-for year in years[5:6]:
+for year in years[4:5]:
     print('Working in year ' + year)
-    for index, row in fechas.iloc[0::,:].iterrows():
+    for index, row in fechas.iloc[72:73,:].iterrows():
         year_g = year
         mes_g = str(row['mes_guia']).zfill(2)
         mes_d = str(row['mes_descarga']).zfill(2)
@@ -43,14 +44,13 @@ for year in years[5:6]:
         os.makedirs(carpeta_s, exist_ok=True)
         # URL de localilizacion de archivo
         urls = list(gen_urls(int(year), row['mes_descarga'], row['dia_descarga'], row['mes_guia'], url_base))
-        for n, url in enumerate(urls):
-            print(f"Procesando archivo {n + 1} de {len(urls)}.")
+        i1 = [i for i, s in enumerate(urls) if 'flxf2005052706.01.2004120718' in s]
+        for n, url in enumerate(urls[i1[0]:]):
+            print(f"Procesando archivo {n + 1 + i1[0]} de {len(urls)}.")
             print(url)
-            #exit()
             file_path = set_file_abs_path(url, year_g, mes_g)
             if not file_path.exists() or not check_md5(file_path, url):
                 download_file_from_url(file_path, url)
-            print('Guardando archivo en:', file_path)
             print('\n')
             time.sleep(3)
 

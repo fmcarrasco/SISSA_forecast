@@ -12,7 +12,8 @@ __pycache__/
 *.nc
 *.jpg
 *.grb2
-
+*.npy
+*.txt
 # Distribution / packaging
 .Python
 build/

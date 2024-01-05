@@ -131,6 +131,7 @@ def get_gefshist_plazo_mes(nomvar, plazo, gefs_f, mes):
     lista_datos = []
     #fmod = gefs_f + 'Distrib/' + nomvar + '/' + nomvar + '_' + plazo_str + '.nc'
     fmod = gefs_f + 'Distrib/GEFSv12/' + nomvar + '/' + nomvar + '_' + plazo_str + '.nc'
+    print(fmod)
     ds = xr.open_dataset(fmod)#.chunk(chunks={'time':-1, 'lat':50, 'lon':50})
     promedio = ds.to_array(dim='new').mean('new')
     ds = ds.assign(promedio=promedio)

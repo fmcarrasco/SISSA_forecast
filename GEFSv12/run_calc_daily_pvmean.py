@@ -11,20 +11,15 @@ import os
 start = time.time()
 
 
-def calc_tdmean(rh, tmean):
-    num = 243.04*(np.log(rh/100.)+((17.625*tmean)/(243.04+tmean)))
-    den = (17.625-np.log(rh/100.)-((17.625*tmean)/(243.04+tmean)))
-    return num/den # en Celsius
-
 def calc_pvmean(tdmean):
-    num = 17.67*tdmean
-    den = tdmean - 243.5
+    # https://www.weather.gov/media/epz/wxcalc/vaporPressure.pdf
+    num = 7.5*tdmean
+    den = 237.3 + tdmean
     frac = num/den
-    return 6.112*np.exp(frac) # en Pa
+    return 6.11*np.power(10., frac) # en Pa
 
 v0 = 'pvmean' # Variable a calcular
 v1 = 'tdmean' # Datos de Entrada
-v2 = None # Datos de Entrada
 
 fechas = pd.bdate_range(start='2000-01-05', end='2019-12-25', freq='W-WED')
 #fechas = pd.bdate_range(start='2004-12-08', end='2004-12-08', freq='W-WED')
@@ -42,12 +37,9 @@ for ffecha in fechas:
     os.makedirs(carpeta_f, exist_ok=True)
     for nens in ensembles:
         f1 = c_daily + v1 + '/' + yr + fecha + '/' + v1 + '_' + fecha + '_' + nens + '.nc'
-        f2 = c_daily + v2 + '/' + yr + fecha + '/' + v2 + '_' + fecha + '_' + nens + '.nc'
         exist_f1 = os.path.isfile(f1)
-        exist_f2 = os.path.isfile(f2)
-        if exist_f1 & exist_f2:
+        if exist_f1:
             a1 = xr.open_dataset(f1)
-            a2 = xr.open_dataset(f2)
             n1 = Dataset(f1, 'r')
             lat = n1['lat'][:]
             latb = n1['lat_bnds'][:]
@@ -59,12 +51,10 @@ for ffecha in fechas:
             print('No existen los dos archivos para calculo')
             print(f1)
             print(exist_f1)
-            print(f2)
-            print(exist_f2)
             continue
-        tdmean = calc_tdmean(a1[v1], a2[v2])
-        datos = {'nvar':v0, 'standard_name': 'mean_dewpoint_temperature', 'units':'Celsius', 
-                'long_name': '2m mean Dewpoint Temperature 0-23 UTC', 'valores':tdmean.values } 
+        pvmean = calc_pvmean(a1[v1])
+        datos = {'nvar':v0, 'standard_name': 'mean_vapor_pressure', 'units':'hPa', 
+                'long_name': '2m mean vapor pressure 0-23 UTC', 'valores':pvmean.values } 
         #
         ncfile =  carpeta_f + v0 + '_' + fecha + '_' + nens + '.nc'
         print('### Guardando archivo diario', ncfile, ' ###')

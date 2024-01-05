@@ -7,15 +7,14 @@ import xarray as xr
 
 import sys
 sys.path.append('./lib/')
-from correccion_functions import qq_corr
-from correccion_functions import cycle_matrix
+from correccion_functions import cycle_matrix_rain
 
 import time
 
 
 def run():
-    fechas = pd.date_range('2010-01-06', '2019-12-25', freq='W-WED')
-    #fechas = pd.date_range('2013-11-06', '2019-12-25', freq='W-WED')
+    #fechas = pd.date_range('2010-01-06', '2019-12-25', freq='W-WED')
+    fechas = pd.date_range('2011-05-11', '2019-12-25', freq='W-WED')
 
     ensambles = ['c00', 'p01', 'p02', 'p03', 'p04', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10']
 
@@ -25,7 +24,7 @@ def run():
     gefs_hist = '/shera/datos/SISSA/Distrib/GEFSv12/'
     #era5_f = '/Volumes/Almacenamiento/python_proyects/DATOS/SISSA/ERA5/'
     era5_hist = '/shera/datos/SISSA/Distrib/ERA5/'
-    nomvar = 'v10mean'
+    nomvar = 'rain'
     carpeta_corr = gefs_corr + nomvar + '/'
     os.makedirs(carpeta_corr, exist_ok=True)
     startf = time.time()
@@ -33,7 +32,7 @@ def run():
         print(fecha)
         yr = fecha.strftime('%Y')
         if yr == '2014':
-            print(u'Saltamos el año:', yr)
+            print(u'Nos saltamos año:',yr)
             continue
         fp = fecha.strftime('%Y%m%d')
         archivos = [gefs_f + 'Diarios/GEFSv12/'+ nomvar + '/' + yr + '/' + fp +'/' + nomvar + '_' + fp + '_' + ens + '.nc' for ens in ensambles]
@@ -46,22 +45,32 @@ def run():
             ds = xr.open_dataset(archivo)
             prono3d = ds[nomvar].values
             prono3d_corr = prono3d.copy()
+            mask3d_corr = np.empty(prono3d.shape)
             meses = np.array(ds.time.dt.month)
             start = time.time()
             for t in np.arange(0,34):
+                #print('------- Plazo: ', t, '-------')
                 str_plazo = str(t).zfill(2)
                 str_mes = str(meses[t]).zfill(2)
                 fh_gefs = gefs_hist + nomvar + '/' + nomvar + '_p' + str_plazo + '_m' + str_mes + '.nc' 
+                fm_gefs = gefs_hist + nomvar + '/' + nomvar + '_p' + str_plazo + '_m' + str_mes + '_minimo.npy' 
                 fh_era5 = era5_hist + nomvar + '/' + nomvar + '_m' + str_mes + '.nc'
+                #print(fm_gefs)
                 e5hist = xr.open_dataset(fh_era5)
                 gehist = xr.open_dataset(fh_gefs)
+                minimo = np.load(fm_gefs)
                 gh = gehist[nomvar].values
                 er = e5hist[nomvar].values
                 prono = prono3d[t,:,:]
-                prono3d_corr[t,:,:] = cycle_matrix(prono, gh, er)
+                corr2d, mascara2d = cycle_matrix_rain(prono, gh, er, minimo)
+                prono3d_corr[t,:,:] = corr2d
+                mask3d_corr[t,:,:] = mascara2d
                 # Close datasets 
                 e5hist.close()
                 gehist.close()
+                #end = time.time()
+                #minutos = np.round((end-start)/60., 3)
+                #print('Se demoro en corregir', minutos, ' minutos')
             ds_copy = ds.copy(deep=True)
             ds_copy[nomvar].values = prono3d_corr
             print('############### Archivo Correccion ###################')
@@ -73,6 +82,8 @@ def run():
             end = time.time()
             minutos = np.round((end-start)/60., 3)
             print('Se demoro en corregir', minutos, ' minutos')
+            mask_file = os.path.basename(archivo).split('.')[0] + '.npy'
+            np.save(carpeta_dato + mask_file, mask3d_corr)
 ############################
     endf = time.time()
     minutosf = np.round((endf - startf)/60., 3)

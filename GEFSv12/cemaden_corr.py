@@ -14,8 +14,7 @@ import time
 
 
 def run():
-    fechas = pd.date_range('2010-01-06', '2019-12-25', freq='W-WED')
-    #fechas = pd.date_range('2013-11-06', '2019-12-25', freq='W-WED')
+    fechas = pd.date_range('2014-07-02', '2014-12-31', freq='W-WED')
 
     ensambles = ['c00', 'p01', 'p02', 'p03', 'p04', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10']
 
@@ -32,9 +31,6 @@ def run():
     for fecha in fechas:
         print(fecha)
         yr = fecha.strftime('%Y')
-        if yr == '2014':
-            print(u'Saltamos el año:', yr)
-            continue
         fp = fecha.strftime('%Y%m%d')
         archivos = [gefs_f + 'Diarios/GEFSv12/'+ nomvar + '/' + yr + '/' + fp +'/' + nomvar + '_' + fp + '_' + ens + '.nc' for ens in ensambles]
         print('Extrayendo datos del pronostico')
