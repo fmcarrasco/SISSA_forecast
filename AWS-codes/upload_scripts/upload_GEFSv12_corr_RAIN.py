@@ -11,7 +11,7 @@ b_name = 'sissa-forecast-database'
 
 carpeta_local = '/shera/datos/SISSA/Diarios/GEFSv12_corr/'
 variables = ['rain']
-fechas = pd.date_range('2019-01-02', '2019-12-25', freq='W-WED')
+fechas = pd.date_range('2017-01-04', '2017-12-27', freq='W-WED')
 
 start = time.time()
 for variable in variables:

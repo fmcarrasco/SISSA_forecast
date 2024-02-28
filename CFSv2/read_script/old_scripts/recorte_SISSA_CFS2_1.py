@@ -18,23 +18,27 @@ fechas = pd.read_csv(f_guia)
 
 variables = pd.read_csv('variables_aceptadas.txt',index_col=['var'])
 
-for year in years[1:2]:
+for year in years[4:5]:
     print('Working in year ' + year)
-    for mes in months[5:6]:
+    for mes in months[1:2]:
         year_g = year
         mes_g = str(mes).zfill(2)
         print(mes_g)
         carpeta_i = c0 + year + '/' + mes_g + '/'
         dirlist = sorted([d for d in next(os.walk(carpeta_i))[1]])
         starttime_carpeta = time.time()
-        for carpeta in dirlist[2:3]:
+        for carpeta in dirlist[1:2]:
             print('Working in carpeta ' + carpeta_i + carpeta)
             for hour in ['00','06','12','18']:
                 print('Working in hour ' + hour)
                 archivos=sorted(glob.glob(carpeta_i + carpeta + '/*.*' + hour + '.grb2'))
                 for archivo in archivos:
-                    tiempos, lat, latb, lon, lonb, datos, unidades = get_cut_grib(archivo)
-                    print('Procesando archivo:', archivo)
+                    try:
+                        tiempos, lat, latb, lon, lonb, datos, unidades = get_cut_grib(archivo)
+                        print('Procesando archivo:', archivo)
+                    except:
+                        print('Error con el archivo:', archivo)
+                        continue
                     for key in datos.keys():
                         carpeta_o = c1 + '/' + key + '/' + year + '/' + mes_g + '/' + carpeta + '/' + hour + '/'
                         os.makedirs(carpeta_o, exist_ok=True)

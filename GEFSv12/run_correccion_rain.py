@@ -14,7 +14,7 @@ import time
 
 def run():
     #fechas = pd.date_range('2010-01-06', '2019-12-25', freq='W-WED')
-    fechas = pd.date_range('2011-05-11', '2019-12-25', freq='W-WED')
+    fechas = pd.date_range('2016-01-06', '2016-12-28', freq='W-WED')
 
     ensambles = ['c00', 'p01', 'p02', 'p03', 'p04', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10']
 
@@ -31,12 +31,10 @@ def run():
     for fecha in fechas:
         print(fecha)
         yr = fecha.strftime('%Y')
-        if yr == '2014':
-            print(u'Nos saltamos año:',yr)
-            continue
         fp = fecha.strftime('%Y%m%d')
         archivos = [gefs_f + 'Diarios/GEFSv12/'+ nomvar + '/' + yr + '/' + fp +'/' + nomvar + '_' + fp + '_' + ens + '.nc' for ens in ensambles]
         print('Extrayendo datos del pronostico')
+        start = time.time()
         for archivo in archivos:
             if not os.path.isfile(archivo):
                 print('No existe el archivo:', archivo)
@@ -47,7 +45,6 @@ def run():
             prono3d_corr = prono3d.copy()
             mask3d_corr = np.empty(prono3d.shape)
             meses = np.array(ds.time.dt.month)
-            start = time.time()
             for t in np.arange(0,34):
                 #print('------- Plazo: ', t, '-------')
                 str_plazo = str(t).zfill(2)
@@ -68,9 +65,6 @@ def run():
                 # Close datasets 
                 e5hist.close()
                 gehist.close()
-                #end = time.time()
-                #minutos = np.round((end-start)/60., 3)
-                #print('Se demoro en corregir', minutos, ' minutos')
             ds_copy = ds.copy(deep=True)
             ds_copy[nomvar].values = prono3d_corr
             print('############### Archivo Correccion ###################')
@@ -79,11 +73,11 @@ def run():
             n_archivo = carpeta_dato + os.path.basename(archivo)
             print('Guardando archivo:', n_archivo)
             ds_copy.to_netcdf(n_archivo)
-            end = time.time()
-            minutos = np.round((end-start)/60., 3)
-            print('Se demoro en corregir', minutos, ' minutos')
             mask_file = os.path.basename(archivo).split('.')[0] + '.npy'
             np.save(carpeta_dato + mask_file, mask3d_corr)
+        end = time.time()
+        minutos = np.round((end-start)/60., 3)
+        print('Se demoro en corregir', minutos, ' minutos')
 ############################
     endf = time.time()
     minutosf = np.round((endf - startf)/60., 3)

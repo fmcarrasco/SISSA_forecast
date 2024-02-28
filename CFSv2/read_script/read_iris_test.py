@@ -13,13 +13,17 @@ from cftime import date2num
 
 start = time.time()
 
-f1 = 'tmp_2m_2000010500_c00.nc'
+#f1 = 'tmp_2m_2000010500_c00.nc'
+f1 = 'tmin_20100106_c00.nc'
 f2 = 'flxf2000020500.nc'
+f3 = 'tmin_2m.nc'
 
 c1 = iris.load(f1)
-c2  = iris.load(f2)
-c3 = Dataset(f2, 'r')
-original = np.squeeze(c3.variables['t2m'][:])
+c2  = iris.load(f3)
+c3 = Dataset(f3, 'r')
+print(c3.variables)
+var_n = 'tmin_2m'
+original = np.squeeze(c3.variables[var_n][10,:,:])
 lon_o = np.squeeze(c3.variables['lon'][:])
 lat_o = np.squeeze(c3.variables['lat'][:])
 print(lat_o)
@@ -54,7 +58,7 @@ fechas = num2date(valores, unidad, calendar=calendario,
                   only_use_cftime_datetimes=False,
                   only_use_python_datetimes=True)
 print(fechas)
-for i, fecha in enumerate(fechas):
+for i, fecha in enumerate(fechas[10:11]):
     time_constr = iris.Constraint(time=lambda t: t.point == fecha)
     vreg = pp05_reg.extract(time_constr).data
     vori = pp05.extract(time_constr).data
@@ -74,7 +78,7 @@ for i, fecha in enumerate(fechas):
     ax[0].coastlines()
     ax[0].set_title('Reggrid AreaWeighted')
     
-    im = ax[1].pcolormesh(lon_o, lat_o, original, transform=ccrs.PlateCarree(), cmap='gist_rainbow')#,vmin=0, vmax=50)
+    im = ax[1].pcolormesh(lon_o, lat_o, v1, transform=ccrs.PlateCarree(), cmap='gist_rainbow')#,vmin=0, vmax=50)
     ax[1].coastlines()
     ax[1].set_title('Original')
     

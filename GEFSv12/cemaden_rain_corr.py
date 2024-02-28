@@ -13,7 +13,7 @@ import time
 
 
 def run():
-    fechas = pd.date_range('2018-01-03', '2018-12-26', freq='W-WED')
+    fechas = pd.date_range('2017-01-04', '2017-12-27', freq='W-WED')
 
     ensambles = ['c00', 'p01', 'p02', 'p03', 'p04', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10']
 
@@ -35,6 +35,9 @@ def run():
         print('Extrayendo datos del pronostico')
         start = time.time()
         for archivo in archivos:
+            if not os.path.isfile(archivo):
+                print('No existe el archivo:', archivo)
+                continue
             print('Trabajando en: ', archivo)
             ds = xr.open_dataset(archivo)
             prono3d = ds[nomvar].values

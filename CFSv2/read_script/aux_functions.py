@@ -7,7 +7,7 @@ Funciones auxiliares para manipular datos de GEFSv12
 import numpy as np
 import xarray as xr
 import datetime as dt
-from netCDF4 import date2num, Dataset
+from netCDF4 import date2num, Dataset, num2date
 
 
 def convert_bytes(num):
@@ -66,6 +66,66 @@ def get_cut_grib(nfile):
     
     return time_vals, lat, latb, lon, lonb, datos, unidades
 
+
+def get_cut_grib_v2(nfile):
+    import pandas as pd
+    # -- Variables que nos quedamos
+    variables = pd.read_csv('variables_aceptadas.txt')
+    #
+    ds = xr.open_dataset(nfile, engine='pynio')
+    nanosecs = ds.forecast_time0.to_numpy()
+    #----- Extraccion de tiempos -----
+    fstring = nfile.split('/')[6]
+    # Hora inicial
+    f0 = dt.datetime.strptime(fstring, '%Y%m%d%H')
+    tiempos = [f0 + dt.timedelta(microseconds=float(ns)*0.001) for ns in nanosecs]
+    # Array de tiempos
+    time_unit = 'hours since 1990-01-01 00:00'
+    time_calendar = 'proleptic_gregorian'
+    time_vals = date2num(tiempos, units=time_unit, calendar=time_calendar)
+    #----- Recorte area SISSA ----
+    min_lat = -8.5; max_lat = -57.
+    min_lon = -82.; max_lon = -33.
+    # Cambio 0-360 a -180-180 en Longitudes
+    #ds.coords['lon_0'] = (ds.coords['lon_0'] + 180) % 360 - 180
+    min_lon_360 = min_lon + 360.
+    max_lon_360 = max_lon + 360.
+    # Recortamos los datos al area SISSA
+    cropped_ds = ds.sel(lat_0=slice(min_lat, max_lat), lon_0=slice(min_lon_360, max_lon_360))
+    varcropped = list(cropped_ds.keys())[0]
+    # Extraemos datos de Lon/Lat recortados
+    lon = (cropped_ds.coords['lon_0'].to_numpy() +180) % 360 - 180
+    lat = cropped_ds.coords['lat_0'].to_numpy()
+    # Lon/Lat BOUNDS
+    resol_lon = np.fabs(lon[1] - lon[0])
+    resol_lat = np.fabs(lat[1] - lat[0])
+    #
+    lonb = np.empty((len(lon),2))
+    lonb[:,0] = lon - resol_lon/2.
+    lonb[:,1] = lon + resol_lon/2.
+    latb = np.empty((len(lat),2))
+    latb[:,0] = lat + resol_lat/2.
+    latb[:,1] = lat - resol_lat/2.
+    # ------
+    # Extraemos el dato recortado como diccionario
+    datos = {}
+    unidades = {}
+    if varcropped == 'UGRD_P0_L103_GGA0':
+        for nomvar in list(cropped_ds.keys()):
+            df = variables.loc[variables.vargrb2 == nomvar,:]
+            nvar = df['var'].values[0]
+            datos[nvar] = cropped_ds[nomvar].to_numpy()
+            unidades[nvar] = cropped_ds[nomvar].units 
+    else:
+        df = variables.loc[variables.vargrb2 == varcropped,:]
+        nvar = df['var'].values[0] 
+        datos[nvar] = cropped_ds[varcropped].to_numpy()
+        unidades[nvar] = cropped_ds[varcropped].units 
+    # Cerramos los datos abiertos
+    ds.close()
+    cropped_ds.close()
+    
+    return time_vals, lat, latb, lon, lonb, datos, unidades
 
 def save_netcdf(ncfile, tiempos, lat, latb, lon, lonb, datos):
     
