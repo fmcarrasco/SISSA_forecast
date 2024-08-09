@@ -7,7 +7,6 @@ import os
 from aux_functions import get_cut_grib, save_netcdf
 
 import sys
-print (sys.argv)
 
 start = time.time()
 
@@ -35,6 +34,13 @@ for carpeta in dirlist[cpta:cpta+1]:
     for hour in ['00','06','12','18']:
         print('Working in hour ' + hour)
         archivos=sorted(glob.glob(carpeta_i + carpeta + '/*.*' + hour + '.grb2'))
+        #ds0 = xr.open_dataset(archivos[0], engine='pynio')
+        #ds1 = xr.open_dataset(archivos[1], engine='pynio')
+        #ds_concat = xr.concat([ds0, ds1], dim='time')
+        ds_concat = xr.open_mfdataset(archivos, concat_dim='time', combine='nested', compat='override', engine='pynio')
+        print(ds_concat)
+        exit()
+        '''
         for archivo in archivos:
             try:
                 tiempos, lat, latb, lon, lonb, datos, unidades = get_cut_grib(archivo)
@@ -59,4 +65,5 @@ carpeta_min = np.round(carpeta_sec/60.,2)
 carpeta_hou = np.round(carpeta_min/60.,2)
 print('Minutos por carpeta', carpeta_min)
 print('Horas por carpeta', carpeta_hou)
+        '''
 

@@ -11,6 +11,7 @@ archivos = glob.glob(carpeta + '*.1999121200.grb2')
 variables = pd.read_csv('variables_aceptadas.txt',index_col=['var'])
 
 tiempos, lat, latb, lon, lonb, datos, unidades = get_cut_grib(carpeta+archivo)
+print(tiempos)
 
 print(unidades)
 for key in datos.keys():
@@ -20,6 +21,7 @@ for key in datos.keys():
                  'standard_name': variables.loc[key,'standard_name'],
                  'long_name': variables.loc[key,'long_name'],
                  'valores': datos[key]}
+    print(datos[key].shape)
     save_netcdf(ncfile, tiempos, lat, latb, lon, lonb, new_datos)
     
 #carpeta = './'

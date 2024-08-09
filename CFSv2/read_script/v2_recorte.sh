@@ -2,9 +2,9 @@
 
 SECONDS=0
 
-year=2011
+year=2019
 echo 'Trabajando en '$year
-for ((i=7;i<=12;i++)); do
+for ((i=1;i<=12;i++)); do
     echo 'Trabajando en mes '$i
     python v2_recorte_SISSA.py $year $i 0 > ./zTXT/$year\_$i\_0_variables.txt &
     pid0=$!

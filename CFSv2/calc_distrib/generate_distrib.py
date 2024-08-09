@@ -45,12 +45,10 @@ def crea_netcdf_distrib(ncfile, plazo, fechas, lat, lon):
     return ds
 #
 variable = 'tmax'
-carpeta = '/shera/datos/SISSA/Diarios/GEFSv12_corr/'
+carpeta = '/shera/datos/SISSA/Diarios/CFSv2/'
 carpeta_var = carpeta + variable + '/'
-carpeta_dist = '/shera/datos/SISSA/Distrib/GEFSv12_corr/' + variable + '/'
-fechas = pd.bdate_range(start='2000-01-05', end='2009-12-30', freq='W-WED')
-plazos = np.arange(0,34)
-ens_member = ['c00', 'p01', 'p02', 'p03', 'p04', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10']
+carpeta_dist = '/shera/datos/SISSA/Distrib/CFSv2/' + variable + '/'
+plazos = np.arange(0,31)
 #
 os.makedirs(carpeta_dist, exist_ok=True)
 #
@@ -64,22 +62,19 @@ for plazo in plazos:
     dist_file = carpeta_dist + variable + '_' + str(plazo).zfill(2) + '.nc'
     print(dist_file)
     fechas_p = []
-    for ens in ens_member:
-        print(ens)
-        datos = np.empty((nt,ny,nx))
-        datos[:] = np.nan
-        for it, fecha in enumerate(fechas):
-            fechaf = fecha.strftime('%Y%m%d')
-            year = fecha.strftime('%Y')
-            ncfile = carpeta_var + year + '/' + fechaf + '/' + variable + '_' + fechaf + '_' + ens + '.nc'
-            if not os.path.exists(ncfile):
-                print('No existe el archivo:', ncfile)
-                continue
-            nc = Dataset(ncfile, 'r')
-            datos[it,:,:] = nc.variables[variable][plazo,:,:]
-            standard_name = nc.variables[variable].standard_name
-            units = nc.variables[variable].units
-            long_name = ens + ' ' + nc.variables[variable].long_name
+    datos_l = []
+    for year in np.arange(2000,2010):
+        print(year)
+        for mes in np.arange(1,13):
+            cpdata = carpeta + str(year) + '/' + str(mes).zfill(2) + '/'
+            archivos = sorted(glob.glob(cpdata + '*.nc'))
+            for ncfile in archivos:
+                nc = Dataset(ncfile, 'r')
+                datos_l.append(nc.variables[variable][plazo,:,:])
+'''                
+                standard_name = nc.variables[variable].standard_name
+                units = nc.variables[variable].units
+                long_name = ens + ' ' + nc.variables[variable].long_name
             if ens == 'c00':
                 lat = nc.variables['lat'][:]
                 lon = nc.variables['lon'][:]
@@ -103,6 +98,6 @@ for plazo in plazos:
         fvar[:] = datos
         
     ds.close()
-
+'''
 print('--------- Termino de procesar datos -----------')
 

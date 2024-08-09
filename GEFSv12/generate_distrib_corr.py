@@ -8,7 +8,7 @@ def crea_netcdf_distrib(ncfile, plazo, fechas, lat, lon):
     ds = Dataset(ncfile, 'w', format='NETCDF4')
     #---- Atributos globales
     ds.title = 'Archivo distribucion para plazo pronostico: ' + str(plazo).zfill(2)
-    ds.source = 'Datos diarios GEFSv12 estimados para SISSA'
+    ds.source = 'Datos diarios GEFSv12 corregidos para SISSA'
     ds.references = ''
     ds.comment = ''
 
@@ -48,7 +48,7 @@ variable = 'tmax'
 carpeta = '/shera/datos/SISSA/Diarios/GEFSv12_corr/'
 carpeta_var = carpeta + variable + '/'
 carpeta_dist = '/shera/datos/SISSA/Distrib/GEFSv12_corr/' + variable + '/'
-fechas = pd.bdate_range(start='2000-01-05', end='2009-12-30', freq='W-WED')
+fechas = pd.bdate_range(start='2010-01-06', end='2019-12-25', freq='W-WED')
 plazos = np.arange(0,34)
 ens_member = ['c00', 'p01', 'p02', 'p03', 'p04', 'p05', 'p06', 'p07', 'p08', 'p09', 'p10']
 #
@@ -87,6 +87,7 @@ for plazo in plazos:
                 fechas_p.append(aux_t[plazo])
             nc.close()
         #---- Guardamos el dato para cada miembro de ensamble
+        '''
         if ens == 'c00':  # Solo para el primer miembro abrimos el archivo y luego guardamos en el
             if len(fechas_p) < nt:
                 print('Corrigiendo fechas_p')
@@ -95,12 +96,14 @@ for plazo in plazos:
                 ncaux = Dataset(aux_dist_file, 'r')
                 fechas_p = ncaux['time'][:]
                 ncaux.close()
+        '''
+        if ens == 'c00':
             ds = crea_netcdf_distrib(dist_file, plazo, fechas_p, lat, lon)
-        fvar = ds.createVariable(ens, datatype='f8', dimensions=('time', 'lat', 'lon'))
-        fvar.standard_name = standard_name
-        fvar.units = units
-        fvar.long_name = long_name
-        fvar[:] = datos
+    fvar = ds.createVariable(ens, datatype='f8', dimensions=('time', 'lat', 'lon'))
+    fvar.standard_name = standard_name
+    fvar.units = units
+    fvar.long_name = long_name
+    fvar[:] = datos
         
     ds.close()
 

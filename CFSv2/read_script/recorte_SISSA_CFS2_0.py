@@ -32,17 +32,16 @@ for year in years[0:1]:
             for hour in ['00','06','12','18']:
                 print('Working in hour ' + hour)
                 archivos=sorted(glob.glob(carpeta_i + carpeta + '/*.*' + hour + '.grb2'))
-                for archivo in archivos:
+                for archivo in archivos[0:1]:
                     try:
                         tiempos, lat, latb, lon, lonb, datos, unidades = get_cut_grib(archivo)
-                        print(tiempos)
                         print('Procesando archivo:', archivo)
-                        exit()
                     except:
                         print('Error con el archivo:', archivo)
                         continue
                     for key in datos.keys():
-                        carpeta_o = c1 + '/' + key + '/' + year + '/' + mes_g + '/' + carpeta + '/' + hour + '/'
+                        #carpeta_o = c1 + '/' + key + '/' + year + '/' + mes_g + '/' + carpeta + '/' + hour + '/'
+                        carpeta_o = './'
                         os.makedirs(carpeta_o, exist_ok=True)
                         narchivo = '.'.join(os.path.basename(archivo).split('.')[0:3]) + '.nc'
                         ncfile = carpeta_o + narchivo
@@ -51,6 +50,7 @@ for year in years[0:1]:
                                 'long_name': variables.loc[key,'long_name'],
                                 'valores': datos[key]}
                         save_netcdf(ncfile, tiempos, lat, latb, lon, lonb, new_datos)
+                    exit()
         endtime_carpeta = time.time()
         carpeta_sec = endtime_carpeta - starttime_carpeta
         carpeta_min = np.round(carpeta_sec/60.,2)
