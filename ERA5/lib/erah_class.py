@@ -69,8 +69,12 @@ def calc_spmean(sp):
 class erah_class:
     def __init__(self, yr):
         self.year = yr
-        self.file1 = '/shera/datos/ERA5/' + str(yr) + '.nc'
-        self.file2 = '/shera/datos/ERA5/' + str(yr+1) + '.nc'
+        self.file1 = '/datos2/SISSA/ERA5/' + str(yr) + '_pressure.nc'
+        self.file2 = '/datos2/SISSA/ERA5/' + str(yr+1) + '_pressure.nc'
+        #self.file1 = '/datos2/SISSA/ERA5/' + str(yr) + '.nc'
+        #self.file2 = '/datos2/SISSA/ERA5/' + str(yr+1) + '.nc'
+        #self.file1 = '/shera/datos/ERA5/' + str(yr) + '.nc'
+        #self.file2 = '/shera/datos/ERA5/' + str(yr+1) + '.nc'
         self.nc = Dataset(self.file1, 'r')
         self.var = list(self.nc.variables.keys())
         self.var.remove('time')
@@ -146,12 +150,12 @@ class erah_class:
                           'rh':calc_rh, 'u10':calc_u10, 'ROCsfc':calc_radsup, 'rain':calc_rain,
                           'mslmean':calc_mslmean, 'spmean':calc_spmean, 'ROLnet': calc_radsup,
                           'pvmean': calc_pvmean, 'u10mean': calc_umean, 'v10mean':calc_umean,
-                          'tdmean': calc_tmean}
+                          'tdmean': calc_tmean, 'z200':calc_tmean}
 
         self.units_daily = {'tmax':'Celsius', 'tmin':'Celsius', 'tmean':'Celsius',
                             'rh':'%', 'u10':'m s**-1', 'ROCsfc':'J m-2 d-1', 'rain':'mm',
                             'mslmean':'Pa', 'spmean':'Pa', 'ROLnet':'J m-2 d-1', 'pvmean':'hPa',
-                            'u10mean':'m s-1', 'v10mean':'m s-1', 'tdmean':'Celsius'}
+                            'u10mean':'m s-1', 'v10mean':'m s-1', 'tdmean':'Celsius','z200':'m**2 s**-2'}
 
         self.longname_daily = {'tmax':'maximum temperature at 2m', 'tmin':'minimum temperature at 2m',
                                'tmean':'mean temperature at 2m', 'rh':'mean relative humidity',
@@ -159,7 +163,8 @@ class erah_class:
                                'rain':'total precipitation', 'mslmean':'mean sea level pressure',
                                'spmean':'mean surface pressure', 'ROLnet':'Net LongWave radiation',
                                'pvmean':'mean Vapor Pressure', 'u10mean':'mean U wind component',
-                               'v10mean':'mean V wind component', 'tdmean':'mean Dew-point pressure'}
+                               'v10mean':'mean V wind component', 'tdmean':'mean Dew-point pressure',
+                               'z200':'mean 200hPa geopotential height'}
 
     def calc_daily(self, v, datos, mask):
         var_diarias = list(self.fun_daily.keys())
@@ -177,10 +182,12 @@ class erah_class:
                 var = ma.masked_array(datos['t2m'], mask['t2m'])
                 out[it, :, :] = self.fun_daily[v](var[t:t+24,:,:])
             elif v == 'tmax':
-                var = ma.masked_array(datos['mx2t'], mask['mx2t'])
+                #var = ma.masked_array(datos['mx2t'], mask['mx2t'])
+                var = ma.masked_array(datos['t2m'], mask['t2m'])
                 out[it, :, :] = self.fun_daily[v](var[t:t+24,:,:])
             elif v == 'tmin':
-                var = ma.masked_array(datos['mn2t'], mask['mn2t'])
+                #var = ma.masked_array(datos['mn2t'], mask['mn2t'])
+                var = ma.masked_array(datos['t2m'], mask['t2m'])
                 out[it, :, :] = self.fun_daily[v](var[t:t+24,:,:])
             elif v == 'rh':
                 var0 = ma.masked_array(datos['t2m'], mask['t2m'])
@@ -216,6 +223,9 @@ class erah_class:
                 out[it, :, :] = self.fun_daily[v](var[t:t+24,:,:])
             elif v == 'pvmean':
                 var = ma.masked_array(datos['d2m'], mask['d2m'])
+                out[it, :, :] = self.fun_daily[v](var[t:t+24,:,:])
+            elif v == 'z200':
+                var = ma.masked_array(datos['z'], mask['z'])
                 out[it, :, :] = self.fun_daily[v](var[t:t+24,:,:])
 
             datos_diarios[v] = out

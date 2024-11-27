@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Fri Jun 24 16:29:30 2022
 
@@ -12,21 +10,20 @@ import os
 
 carpeta = '/datos2/SISSA/ERA5/'
 os.makedirs(carpeta, exist_ok=True)
-
 c = cdsapi.Client()
 
-years = [str(year) for year in np.arange(2023,2025)]
+years = [str(year) for year in np.arange(1998,1999)]
 
 for iyear in years:
     print('Descargando el año: ' + iyear)
     c.retrieve(
-        'reanalysis-era5-single-levels',
+        'reanalysis-era5-pressure-levels',
         {
             'product_type': 'reanalysis',
             'format': 'netcdf',
+            'pressure_level': '200',
             'variable': [
-                '10m_u_component_of_wind', '10m_v_component_of_wind',
-                '2m_temperature','total_precipitation',
+                'geopotential',
             ],
             'year': iyear,
             'month': [
@@ -63,4 +60,4 @@ for iyear in years:
                 -33,
             ],
         },
-        carpeta + iyear + '.nc')
+        carpeta + iyear + '_pressure.nc')

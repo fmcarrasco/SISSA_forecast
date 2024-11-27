@@ -1,3 +1,4 @@
+import numpy as np
 import xarray as xr
 
 
@@ -10,6 +11,21 @@ def variable_diaria(var):
         return 'tmean'
     elif var == 'prate':
         return 'rain'
+
+def get_lat_lon_bnds(lat, lon):
+    # Lon/Lat BOUNDS
+    resol_lon = np.fabs(lon[1] - lon[0])
+    resol_lat = np.fabs(lat[1] - lat[0])
+
+    lonb = np.empty((len(lon),2))
+    lonb[:,0] = lon - resol_lon/2.
+    lonb[:,1] = lon + resol_lon/2.
+    latb = np.empty((len(lat),2))
+    latb[:,0] = lat + resol_lat/2.
+    latb[:,1] = lat - resol_lat/2.
+
+    return latb, lonb
+
 
 def calculo_diario(ds, nvar, v025, esquema):
     if nvar == 'tmax_2m':

@@ -23,18 +23,6 @@ if int(year) > 2011:
     print('Este script trabaja con datos desde 2000-2011')
     exit()
 
-#############################
-# Informacion para interpolar a reticula 0.25 simil GEFSv12
-nctestigo = './archivo_guia/tmax_20000105_c00.nc'
-c1 = iris.load(nctestigo)
-if variable == 'apcp_sfc':
-    esquema = iris.analysis.AreaWeighted(mdtol=0.5)
-else:
-    esquema = iris.analysis.Linear()
-#Obtenemos el cubo
-v025 = c1[0]
-
-
 ######################################
 print('Working in year ' + year)
 print('at month:', mes)
@@ -43,6 +31,9 @@ c1 = '/shera/datos/SISSA/Diarios/CFSv2/'
 carpeta_i = c0 + variable + '/' + year + '/' + mes + '/'
 carpeta_o = c1 + var_d + '/' + year + '/' + mes + '/'
 os.makedirs(carpeta_o, exist_ok=True)
+
+print(carpeta_i)
+print(carpeta_o)
 
 fechas = sorted([ f.path for f in os.scandir(carpeta_i) if f.is_dir() ])
 horas = ['00', '06', '12', '18']
